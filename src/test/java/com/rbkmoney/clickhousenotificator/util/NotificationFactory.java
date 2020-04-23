@@ -12,7 +12,7 @@ public class NotificationFactory {
     @NotNull
     public static Notification createNotification(String select, Status status) {
         Notification notification = new Notification();
-        notification.setFrequency("1m");
+        notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
         notification.setName("Test");
         notification.setCreatedAt(now);

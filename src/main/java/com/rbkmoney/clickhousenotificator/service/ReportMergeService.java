@@ -1,7 +1,6 @@
 package com.rbkmoney.clickhousenotificator.service;
 
 import com.rbkmoney.clickhousenotificator.domain.QueryResult;
-import org.springframework.util.CollectionUtils;
 
 public class ReportMergeService {
 

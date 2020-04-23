@@ -16,7 +16,7 @@ public class TimePeriodCalculator {
 
     public LocalDateTime calculate(Notification notification) {
         return LocalDateTime.now()
-                .minus(periodParser.parse(notification.getPeriod()), ChronoUnit.MILLIS);
+                .minus(periodParser.parse(notification.getFrequency()), ChronoUnit.MILLIS);
     }
 
 }

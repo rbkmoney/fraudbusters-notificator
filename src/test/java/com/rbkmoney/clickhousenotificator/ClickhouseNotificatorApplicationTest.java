@@ -87,7 +87,7 @@ public class ClickhouseNotificatorApplicationTest {
     }
 
     @Test
-    public void contextLoads() throws JsonProcessingException {
+    public void contextLoads() throws JsonProcessingException, InterruptedException {
         //create
         Notification notification = NotificationFactory.createNotification(TestChQuery.QUERY_METRIC_RECURRENT, Status.ACTIVE);
         notificationDao.insert(notification);
@@ -103,12 +103,13 @@ public class ClickhouseNotificatorApplicationTest {
         queryProcessor.process();
 
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
-
         Assert.assertEquals(0L, notificationByStatus.size());
+
+        Thread.sleep(1000L);
 
         queryProcessor.process();
-        notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
-        Assert.assertEquals(0L, notificationByStatus.size());
+        notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
+        Assert.assertEquals(1L, notificationByStatus.size());
     }
 
 }

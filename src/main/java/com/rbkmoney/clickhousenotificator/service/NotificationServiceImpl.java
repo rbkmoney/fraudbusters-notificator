@@ -28,10 +28,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sentNotification(ReportModel reportModel) {
         log.info("NotificationProcessorImpl start sentNotification!");
-        boolean isChanged = isChanged(reportModel);
-
         Report report = reportModel.getCurrentReport();
-        if (!isChanged) {
+        if (!isChanged(reportModel)) {
             report.setStatus(ReportStatus.skipped);
             reportNotificationDao.insert(report);
             log.info("NotificationProcessorImpl skipped: {}", report);
@@ -41,6 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
         mailSenderServiceImpl.send(Message.builder()
                 .content(report.getResult())
                 .build());
+
         report.setStatus(ReportStatus.send);
         reportNotificationDao.insert(report);
         log.info("NotificationProcessorImpl send: {}", report);
@@ -56,11 +55,11 @@ public class NotificationServiceImpl implements NotificationService {
                     return true;
                 }
                 List<String> collect = oldReportResult.get().getResults().stream()
-                        .map(queryResult -> queryResult.values().stream().collect(Collectors.joining("-")))
+                        .map(queryResult -> String.join("-", queryResult.values()))
                         .collect(Collectors.toList());
 
                 long count = newReportResult.get().getResults().stream()
-                        .filter(queryResult -> collect.contains(queryResult.values().stream().collect(Collectors.joining("-"))))
+                        .filter(queryResult -> collect.contains(String.join("-", queryResult.values())))
                         .count();
 
                 //TODO merge function with group params

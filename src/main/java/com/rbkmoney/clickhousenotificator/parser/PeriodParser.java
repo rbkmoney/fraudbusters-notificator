@@ -7,6 +7,8 @@ public class PeriodParser {
 
     public Long parse(String period) {
         switch (period) {
+            case "1s":
+                return 1000L;
             case "1m":
                 return 60 * 1000L;
             case "1h":

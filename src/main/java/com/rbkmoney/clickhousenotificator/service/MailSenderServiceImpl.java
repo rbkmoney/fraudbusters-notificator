@@ -23,7 +23,8 @@ public class MailSenderServiceImpl implements MailSenderService {
 
     public boolean send(Message message) {
         try {
-            log.info("Trying to send message to mail, partyId={}, claimId={}, email={}", message.getPartyId(), message.getClaimId(), message.getTo());
+            log.info("Trying to send message to mail, partyId={}, claimId={}, email={}", message.getPartyId(),
+                    message.getClaimId(), message.getTo());
             MimeMessage mimeMessage = getMimeMessage(message);
             mailSender.send(mimeMessage);
             return true;
@@ -42,4 +43,5 @@ public class MailSenderServiceImpl implements MailSenderService {
         helper.setText(message.getContent(), false);
         return mimeMessage;
     }
+
 }
