@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class NotificationManagerImpl implements NotificationManager {
+public class NotificationResourceImpl implements NotificationResource {
 
     private final NotificationDao notificationDao;
     private final ApiNotificationToDbNotification apiNotificationToDbNotification;

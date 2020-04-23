@@ -4,7 +4,7 @@ import com.rbkmoney.clickhousenotificator.constant.Status;
 import com.rbkmoney.clickhousenotificator.domain.Notification;
 import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
 
-public interface NotificationManager {
+public interface NotificationResource {
 
     Notification create(Notification notification);
 
