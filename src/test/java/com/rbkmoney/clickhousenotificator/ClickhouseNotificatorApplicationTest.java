@@ -15,6 +15,7 @@ import com.rbkmoney.clickhousenotificator.service.NotificationServiceImpl;
 import com.rbkmoney.clickhousenotificator.util.ChInitiator;
 import com.rbkmoney.clickhousenotificator.util.NotificationFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
+import com.rbkmoney.damsel.schedule.SchedulatorSrv;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -53,6 +54,8 @@ public class ClickhouseNotificatorApplicationTest {
 
     @MockBean
     MailSenderServiceImpl mailSenderServiceImpl;
+    @MockBean
+    SchedulatorSrv.Iface schedulatorClient;
 
     @ClassRule
     public static ClickHouseContainer clickHouseContainer = new ClickHouseContainer();
@@ -101,6 +104,10 @@ public class ClickhouseNotificatorApplicationTest {
 
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
 
+        Assert.assertEquals(0L, notificationByStatus.size());
+
+        queryProcessor.process();
+        notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
         Assert.assertEquals(0L, notificationByStatus.size());
     }
 

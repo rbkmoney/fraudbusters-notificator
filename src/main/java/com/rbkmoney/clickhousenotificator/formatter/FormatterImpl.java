@@ -8,7 +8,7 @@ public class FormatterImpl implements Formatter {
 
     @Override
     public String format(String form, List<Map<String, String>> parameters) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 }

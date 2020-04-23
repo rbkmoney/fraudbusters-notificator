@@ -8,7 +8,6 @@ import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
-import com.rbkmoney.clickhousenotificator.filter.ReadyForNotifyFilter;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @Slf4j
 @Component
@@ -31,7 +31,7 @@ public class QueryProcessorImpl {
     private final QueryRepository queryRepository;
     private final QueryResultSerde queryResultSerde;
     private final NotificationService notificationService;
-    private final ReadyForNotifyFilter forNotifyFilter;
+    private final Predicate<ReportModel> readyForNotifyFilter;
 
     public void process() {
         log.info("QueryProcessorImpl start process!");
@@ -39,7 +39,7 @@ public class QueryProcessorImpl {
         if (!CollectionUtils.isEmpty(activeNotifications)) {
             activeNotifications.stream()
                     .map(this::initReportModel)
-                    .filter(forNotifyFilter)
+                    .filter(readyForNotifyFilter)
                     .map(this::queryForNotify)
                     .filter(Optional::isPresent)
                     .forEach(reportModel -> notificationService.sentNotification(reportModel.get()));

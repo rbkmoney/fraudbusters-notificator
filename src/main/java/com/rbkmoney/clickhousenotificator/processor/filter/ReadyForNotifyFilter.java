@@ -1,4 +1,4 @@
-package com.rbkmoney.clickhousenotificator.filter;
+package com.rbkmoney.clickhousenotificator.processor.filter;
 
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
