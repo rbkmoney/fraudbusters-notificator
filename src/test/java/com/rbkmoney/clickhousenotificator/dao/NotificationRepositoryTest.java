@@ -30,7 +30,7 @@ public class NotificationRepositoryTest extends AbstractPostgresIntegrationTest 
         String insert = notificationDao.insert(notification);
 
         //get by id
-        Notification savedNotification = notificationDao.getById(insert);
+        Notification savedNotification = notificationDao.getByName(insert);
         assertEquals("1d", savedNotification.getPeriod());
 
         //get by status
@@ -43,12 +43,12 @@ public class NotificationRepositoryTest extends AbstractPostgresIntegrationTest 
         String updateId = notificationDao.insert(notification);
         assertEquals(insert, updateId);
 
-        savedNotification = notificationDao.getById(insert);
+        savedNotification = notificationDao.getByName(insert);
         assertNotEquals(savedNotification.getCreatedAt(), savedNotification.getUpdatedAt());
 
         //remove by id
         notificationDao.remove(insert);
-        savedNotification = notificationDao.getById(insert);
+        savedNotification = notificationDao.getByName(insert);
         assertNull(savedNotification);
     }
 

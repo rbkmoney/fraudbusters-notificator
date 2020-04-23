@@ -15,7 +15,7 @@ public interface NotificationDao {
 
     void remove(Notification listRecord);
 
-    Notification getById(String id);
+    Notification getByName(String name);
 
     List<Notification> getList();
 

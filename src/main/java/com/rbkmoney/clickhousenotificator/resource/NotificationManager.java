@@ -1,5 +1,6 @@
 package com.rbkmoney.clickhousenotificator.resource;
 
+import com.rbkmoney.clickhousenotificator.constant.Status;
 import com.rbkmoney.clickhousenotificator.domain.Notification;
 import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
 
@@ -9,9 +10,7 @@ public interface NotificationManager {
 
     Notification delete(String id);
 
-    boolean enable(String id);
-
-    boolean disable(String id);
+    void setStatus(String id, Status status);
 
     ValidateResponse validate(Notification notification);
 

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class Notification {
 
-    private String id;
+    private String name;
 
     private String select;
     private String period;
@@ -19,6 +19,8 @@ public class Notification {
 
     private String frequency;
     private String alertChanel;
+
+    private Status status;
 
     private Status enabled;
 

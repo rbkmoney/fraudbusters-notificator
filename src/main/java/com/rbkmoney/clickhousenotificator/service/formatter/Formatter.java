@@ -1,4 +1,4 @@
-package com.rbkmoney.clickhousenotificator.formatter;
+package com.rbkmoney.clickhousenotificator.service.formatter;
 
 import java.util.List;
 import java.util.Map;

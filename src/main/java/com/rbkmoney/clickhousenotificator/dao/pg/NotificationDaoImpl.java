@@ -57,10 +57,10 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
     }
 
     @Override
-    public Notification getById(String id) {
+    public Notification getByName(String name) {
         SelectConditionStep<NotificationRecord> where = getDslContext()
                 .selectFrom(NOTIFICATION)
-                .where(NOTIFICATION.NAME.eq(id));
+                .where(NOTIFICATION.NAME.eq(name));
         return fetchOne(where, listRecordRowMapper);
     }
 
