@@ -3,7 +3,6 @@ package com.rbkmoney.clickhousenotificator.service;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
-import com.rbkmoney.clickhousenotificator.domain.Message;
 import com.rbkmoney.clickhousenotificator.domain.QueryResult;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
@@ -24,6 +23,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final ReportNotificationDao reportNotificationDao;
     private final QueryResultSerde queryResultSerde;
     private final MailSenderServiceImpl mailSenderServiceImpl;
+    private final MailFactory mailFactory;
 
     @Override
     public void sentNotification(ReportModel reportModel) {
@@ -35,14 +35,22 @@ public class NotificationServiceImpl implements NotificationService {
             log.info("NotificationProcessorImpl skipped: {}", report);
             return;
         }
-
-        mailSenderServiceImpl.send(Message.builder()
-                .content(report.getResult())
-                .build());
-
-        report.setStatus(ReportStatus.send);
+        sendNotification(reportModel, report);
         reportNotificationDao.insert(report);
         log.info("NotificationProcessorImpl send: {}", report);
+    }
+
+    private void sendNotification(ReportModel reportModel, Report report) {
+        mailFactory.create(reportModel).ifPresentOrElse(message -> {
+            try {
+                mailSenderServiceImpl.send(message);
+                report.setStatus(ReportStatus.send);
+            } catch (Exception e) {
+                log.error("Error when send message report: {} e: ", report, e);
+                report.setStatus(ReportStatus.failed);
+            }
+        }, () -> report.setStatus(ReportStatus.failed));
+
     }
 
     private boolean isChanged(ReportModel reportModel) {

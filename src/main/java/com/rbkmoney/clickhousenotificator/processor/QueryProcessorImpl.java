@@ -36,6 +36,7 @@ public class QueryProcessorImpl {
     public void process() {
         log.info("QueryProcessorImpl start process!");
         List<Notification> activeNotifications = notificationDao.getByStatus(Status.ACTIVE);
+        log.info("QueryProcessorImpl active notifications: {}", activeNotifications);
         if (!CollectionUtils.isEmpty(activeNotifications)) {
             activeNotifications.stream()
                     .map(this::initReportModel)

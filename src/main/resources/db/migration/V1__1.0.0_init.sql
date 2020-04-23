@@ -28,3 +28,14 @@ CREATE TABLE ch_notificator.report(
     CONSTRAINT report_pkey PRIMARY KEY (id)
 );
 
+CREATE TYPE ch_notificator.channel_type AS ENUM('mail');
+
+CREATE TABLE ch_notificator.channel(
+    NAME                CHARACTER VARYING               NOT NULL,
+    created_at          TIMESTAMP WITHOUT TIME ZONE     NOT NULL,
+    type                ch_notificator.channel_type     NOT NULL,
+    destination         CHARACTER VARYING               NOT NULL,
+    subject             CHARACTER VARYING               NOT NULL,
+    CONSTRAINT channel_pkey PRIMARY KEY (NAME)
+);
+
