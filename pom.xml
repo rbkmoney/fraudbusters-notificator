@@ -39,6 +39,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+
         <!--rbkmoney-->
         <dependency>
             <groupId>com.rbkmoney</groupId>
@@ -108,6 +114,7 @@
             <artifactId>spring-retry</artifactId>
         </dependency>
 
+
         <!--third party-->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -123,6 +130,12 @@
             <groupId>ru.yandex.clickhouse</groupId>
             <artifactId>clickhouse-jdbc</artifactId>
             <version>${clickhouse-jdbc.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>

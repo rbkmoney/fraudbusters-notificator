@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS ch_notificator;
 
-CREATE TABLE ch_notificator.notificationDto(
+CREATE TABLE ch_notificator.notification(
     name            CHARACTER VARYING           NOT NULL,
     created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
