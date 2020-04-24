@@ -1,7 +1,7 @@
 package com.rbkmoney.clickhousenotificator.processor;
 
-import com.rbkmoney.clickhousenotificator.constant.Status;
 import com.rbkmoney.clickhousenotificator.dao.ch.QueryRepository;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
@@ -35,7 +35,7 @@ public class QueryProcessorImpl {
 
     public void process() {
         log.info("QueryProcessorImpl start process!");
-        List<Notification> activeNotifications = notificationDao.getByStatus(Status.ACTIVE);
+        List<Notification> activeNotifications = notificationDao.getByStatus(NotificationStatus.ACTIVE);
         log.info("QueryProcessorImpl active notifications: {}", activeNotifications);
         if (!CollectionUtils.isEmpty(activeNotifications)) {
             activeNotifications.stream()

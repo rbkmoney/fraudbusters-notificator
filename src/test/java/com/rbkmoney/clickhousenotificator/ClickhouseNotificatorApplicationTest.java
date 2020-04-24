@@ -2,8 +2,8 @@ package com.rbkmoney.clickhousenotificator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rbkmoney.clickhousenotificator.constant.Status;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ChannelType;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
@@ -104,11 +104,11 @@ public class ClickhouseNotificatorApplicationTest {
 
         //create
         notificationDao.insert(NotificationFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
-                Status.ACTIVE, CHANNEL));
+                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency"));
 
         //create
         notificationDao.insert(NotificationFactory.createNotification("failedName", "select * from analytic.events_sink_refund",
-                Status.ACTIVE, "errorChannel"));
+                NotificationStatus.ACTIVE, "errorChannel", "test"));
     }
 
     @Test

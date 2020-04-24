@@ -19,6 +19,7 @@ public class QueryResultSerde {
     private final ObjectMapper objectMapper;
 
     public String serialize(List<Map<String, String>> queryResult) {
+        log.debug("QueryResultSerde serialize queryResult: {}", queryResult);
         try {
             QueryResult result = new QueryResult();
             result.setResults(queryResult);
@@ -30,6 +31,7 @@ public class QueryResultSerde {
     }
 
     public Optional<QueryResult> deserialize(String string) {
+        log.debug("QueryResultSerde deserialize string: {}", string);
         try {
             return Optional.ofNullable(objectMapper.readValue(string, QueryResult.class));
         } catch (JsonProcessingException e) {

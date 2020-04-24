@@ -1,10 +1,9 @@
 package com.rbkmoney.clickhousenotificator.dao.pg;
 
-import com.rbkmoney.clickhousenotificator.constant.Status;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.mapper.RecordRowMapper;
-import com.zaxxer.hikari.HikariDataSource;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Query;
@@ -72,10 +71,10 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
     }
 
     @Override
-    public List<Notification> getByStatus(@NotNull Status status) {
+    public List<Notification> getByStatus(@NotNull NotificationStatus status) {
         SelectConditionStep<NotificationRecord> where = getDslContext()
                 .selectFrom(NOTIFICATION)
-                .where(NOTIFICATION.STATUS.eq(status.name()));
+                .where(NOTIFICATION.STATUS.eq(status));
         return fetch(where, listRecordRowMapper);
     }
 

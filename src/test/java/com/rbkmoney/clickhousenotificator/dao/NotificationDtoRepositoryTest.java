@@ -1,7 +1,7 @@
 package com.rbkmoney.clickhousenotificator.dao;
 
 import com.rbkmoney.clickhousenotificator.config.CustomHikariConfig;
-import com.rbkmoney.clickhousenotificator.constant.Status;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDaoImpl;
@@ -26,7 +26,7 @@ public class NotificationDtoRepositoryTest extends AbstractPostgresIntegrationTe
     public void findOne() {
         //create
         Notification notification = NotificationFactory.createNotification(TestChQuery.QUERY_METRIC_RECURRENT,
-                Status.CREATED, "test");
+                NotificationStatus.CREATED, "test", "shopId,currency");
         String insert = notificationDao.insert(notification);
 
         //get by id
@@ -34,7 +34,7 @@ public class NotificationDtoRepositoryTest extends AbstractPostgresIntegrationTe
         assertEquals("1d", savedNotification.getPeriod());
 
         //get by status
-        List<Notification> notifications = notificationDao.getByStatus(Status.CREATED);
+        List<Notification> notifications = notificationDao.getByStatus(NotificationStatus.CREATED);
         assertEquals(1, notifications.size());
 
         //update

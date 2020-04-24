@@ -1,11 +1,10 @@
 package com.rbkmoney.clickhousenotificator.dao.pg;
 
 
-import com.rbkmoney.clickhousenotificator.constant.Status;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface NotificationDao {
 
@@ -19,5 +18,6 @@ public interface NotificationDao {
 
     List<Notification> getList();
 
-    List<Notification> getByStatus(Status status);
+    List<Notification> getByStatus(NotificationStatus status);
+
 }

@@ -1,6 +1,6 @@
 package com.rbkmoney.clickhousenotificator.resource;
 
-import com.rbkmoney.clickhousenotificator.constant.Status;
+import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
@@ -36,9 +36,9 @@ public class NotificationResourceImpl implements NotificationResource {
     @Override
     @GetMapping(value = "/notification/{name}/{status}")
     public void setStatus(@Validated @PathVariable String name,
-                          @Validated @PathVariable Status status) {
+                          @Validated @PathVariable NotificationStatus status) {
         var notification = notificationDao.getByName(name);
-        notification.setStatus(status.name());
+        notification.setStatus(status);
         notificationDao.insert(notification);
         log.info("NotificationResourceImpl changed status notification: {}", notification);
     }
