@@ -14,6 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +93,18 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
                 .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
                         .from(REPORT)
                         .where(REPORT.STATUS.eq(status))));
+        return fetch(where, listRecordRowMapper);
+    }
+
+    @Override
+    public List<Report> getNotificationByStatusAndFromTime(ReportStatus status, LocalDateTime from) {
+        DSLContext dslContext = getDslContext();
+        SelectConditionStep<ReportRecord> where = dslContext
+                .selectFrom(REPORT)
+                .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
+                        .from(REPORT)
+                        .where(REPORT.STATUS.eq(status)
+                                .and(REPORT.CREATED_AT.lt(from)))));
         return fetch(where, listRecordRowMapper);
     }
 

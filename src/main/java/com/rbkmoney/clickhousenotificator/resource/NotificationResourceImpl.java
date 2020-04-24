@@ -1,28 +1,26 @@
 package com.rbkmoney.clickhousenotificator.resource;
 
 import com.rbkmoney.clickhousenotificator.constant.Status;
-import com.rbkmoney.clickhousenotificator.converter.ApiNotificationToDbNotification;
-import com.rbkmoney.clickhousenotificator.converter.DbNotificationToApiNotification;
+import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
-import com.rbkmoney.clickhousenotificator.domain.Notification;
 import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class NotificationResourceImpl implements NotificationResource {
 
     private final NotificationDao notificationDao;
-    private final ApiNotificationToDbNotification apiNotificationToDbNotification;
-    private final DbNotificationToApiNotification notificationToApiNotification;
 
     @Override
     @PostMapping(value = "/notification")
-    public Notification create(@Validated @RequestBody Notification notification) {
-        var convert = apiNotificationToDbNotification.convert(notification);
-        notificationDao.insert(convert);
+    public Notification createOrUpdate(@Validated @RequestBody Notification notification) {
+        notificationDao.insert(notification);
+        log.info("NotificationResourceImpl created notification: {}", notification);
         return notification;
     }
 
@@ -31,20 +29,22 @@ public class NotificationResourceImpl implements NotificationResource {
     public Notification delete(@Validated @PathVariable String name) {
         var notification = notificationDao.getByName(name);
         notificationDao.remove(name);
-        return notificationToApiNotification.convert(notification);
+        log.info("NotificationResourceImpl deleted notification: {}", notification);
+        return notification;
     }
 
     @Override
-    @PostMapping(value = "/notification/{name}")
+    @GetMapping(value = "/notification/{name}/{status}")
     public void setStatus(@Validated @PathVariable String name,
-                          @Validated @RequestBody Status status) {
+                          @Validated @PathVariable Status status) {
         var notification = notificationDao.getByName(name);
         notification.setStatus(status.name());
         notificationDao.insert(notification);
+        log.info("NotificationResourceImpl changed status notification: {}", notification);
     }
 
     @Override
-    @PostMapping(value = "/notification/vallidate")
+    @PostMapping(value = "/notification/validate")
     public ValidateResponse validate(@Validated @RequestBody Notification notification) {
         return null;
     }

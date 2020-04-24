@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @ContextConfiguration(classes = {NotificationDaoImpl.class, CustomHikariConfig.class})
-public class NotificationRepositoryTest extends AbstractPostgresIntegrationTest {
+public class NotificationDtoRepositoryTest extends AbstractPostgresIntegrationTest {
 
     @Autowired
     NotificationDao notificationDao;

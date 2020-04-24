@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 import static com.rbkmoney.clickhousenotificator.dao.domain.Tables.CHANNEL;
 
@@ -57,6 +58,12 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
                 .selectFrom(CHANNEL)
                 .where(CHANNEL.NAME.eq(name));
         return fetchOne(where, listRecordRowMapper);
+    }
+
+    @Override
+    public List<Channel> getAll() {
+        return fetch(getDslContext()
+                .selectFrom(CHANNEL), listRecordRowMapper);
     }
 
 }
