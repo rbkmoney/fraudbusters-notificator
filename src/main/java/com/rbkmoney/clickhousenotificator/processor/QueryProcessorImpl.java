@@ -10,11 +10,14 @@ import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
+import com.rbkmoney.damsel.schedule.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.thrift.TException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,7 @@ import java.util.function.Predicate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class QueryProcessorImpl {
+public class QueryProcessorImpl implements ScheduledJobExecutorSrv.Iface {
 
     private final NotificationDao notificationDao;
     private final ReportNotificationDao reportNotificationDao;
@@ -33,7 +36,18 @@ public class QueryProcessorImpl {
     private final NotificationService notificationService;
     private final Predicate<ReportModel> readyForNotifyFilter;
 
-    public void process() {
+    @Override
+    public ContextValidationResponse validateExecutionContext(ByteBuffer context) throws TException {
+        log.info("QueryProcessorImpl validateExecutionContext context!");
+        ContextValidationResponse contextValidationResponse = new ContextValidationResponse();
+        ValidationResponseStatus validationResponseStatus = new ValidationResponseStatus();
+        validationResponseStatus.setSuccess(new ValidationSuccess());
+        contextValidationResponse.setResponseStatus(validationResponseStatus);
+        return contextValidationResponse;
+    }
+
+    @Override
+    public ByteBuffer executeJob(ExecuteJobRequest request) throws TException {
         log.info("QueryProcessorImpl start process!");
         List<Notification> activeNotifications = notificationDao.getByStatus(NotificationStatus.ACTIVE);
         log.info("QueryProcessorImpl active notifications: {}", activeNotifications);
@@ -46,6 +60,7 @@ public class QueryProcessorImpl {
                     .forEach(reportModel -> notificationService.sentNotification(reportModel.get()));
         }
         log.info("QueryProcessorImpl finished process!");
+        return ByteBuffer.wrap(new byte[0]);
     }
 
     private ReportModel initReportModel(final Notification notification) {

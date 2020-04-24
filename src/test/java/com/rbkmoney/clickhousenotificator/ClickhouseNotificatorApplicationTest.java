@@ -18,6 +18,7 @@ import com.rbkmoney.clickhousenotificator.util.ChInitiator;
 import com.rbkmoney.clickhousenotificator.util.NotificationFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
 import com.rbkmoney.damsel.schedule.SchedulatorSrv;
+import org.apache.thrift.TException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -112,8 +113,8 @@ public class ClickhouseNotificatorApplicationTest {
     }
 
     @Test
-    public void contextLoads() throws JsonProcessingException, InterruptedException {
-        queryProcessor.process();
+    public void contextLoads() throws JsonProcessingException, InterruptedException, TException {
+        queryProcessor.executeJob(null);
 
         List<Report> notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.send);
 
@@ -121,14 +122,14 @@ public class ClickhouseNotificatorApplicationTest {
         QueryResult queryResult = objectMapper.readValue(result, QueryResult.class);
         assertEquals("ad8b7bfd-0760-4781-a400-51903ee8e504", queryResult.getResults().get(0).get("shopId"));
 
-        queryProcessor.process();
+        queryProcessor.executeJob(null);
 
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
         assertEquals(0L, notificationByStatus.size());
 
         Thread.sleep(1000L);
 
-        queryProcessor.process();
+        queryProcessor.executeJob(null);
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
         assertEquals(1L, notificationByStatus.size());
 
