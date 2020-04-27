@@ -21,3 +21,16 @@
     alertChanel: ""
  }
 ```
+
+Date parameters: 
+
+```
+
+$currentDate: 
+
+$currentMonth
+
+$currentYear
+
+
+```
