@@ -5,6 +5,7 @@ import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ValidateError;
 import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
+import com.rbkmoney.clickhousenotificator.exception.ValidationNotificationException;
 import com.rbkmoney.clickhousenotificator.service.QueryService;
 import com.rbkmoney.clickhousenotificator.service.validator.Validator;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,10 @@ public class NotificationResourceImpl implements NotificationResource {
     @Override
     @PostMapping(value = "/notification")
     public Notification createOrUpdate(@Validated @RequestBody Notification notification) {
+        ValidateResponse validate = validate(notification);
+        if (!CollectionUtils.isEmpty(validate.getErrors())) {
+            throw new ValidationNotificationException("Exception when create errors: " + validate);
+        }
         notificationDao.insert(notification);
         log.info("NotificationResourceImpl created notification: {}", notification);
         return notification;
