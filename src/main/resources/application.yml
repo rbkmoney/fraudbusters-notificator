@@ -1,0 +1,74 @@
+server:
+  port: '@server.port@'
+---
+management:
+  security:
+    flag: false
+  metrics:
+    export:
+      statsd:
+        enabled: false
+        flavor: etsy
+  endpoint.health.show-details: always
+---
+spring:
+  application:
+    name: '@project.name@'
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    hikari:
+      idle-timeout: 30000
+      maximum-pool-size: 10
+      jdbc-url: @db.url@
+      username:  @db.user@
+      password: @db.password@
+      driver-class-name: org.postgresql.Driver
+  flyway:
+      url: "jdbc:postgresql://localhost:5432/ch_notificator"
+---
+info:
+  version: '@project.version@'
+  stage: dev
+mail:
+  host: mr1.linode.rbkmoney.net
+  port: 25
+  username: ""
+  password: ""
+  from: no-reply@rbkmoney.com
+  protocol: smtp
+  retry:
+    max:
+      attempts: 3
+    backoff:
+      period: 1000
+  smtp:
+    auth: false
+    timeout: 30000
+    starttls:
+      enable: true
+---
+clickhouse.db:
+  url: "jdbc:clickhouse://localhost:8123/default"
+  user: "user"
+  password: "password"
+  connection.timeout: 50000
+  compress: false
+---
+schedulator:
+  enabled: true
+  register-retry:
+    max-attempts: 10
+    back-off-period: 60000
+  job:
+    job-id: closeRsbTerminalJob_V2
+    revision-id: 16396
+    scheduler-id: 64
+    calendar-id: 1
+    service-callback-path: https://localhost:8022/v1/scheduled_notify
+---
+service:
+  schedulator:
+    url: http://schedulator:8022/v1/schedulator
+    networkTimeout: 5000
