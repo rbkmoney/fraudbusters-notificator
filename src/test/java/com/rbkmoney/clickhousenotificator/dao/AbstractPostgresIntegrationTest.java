@@ -31,9 +31,9 @@ public abstract class AbstractPostgresIntegrationTest {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.datasource.hikari.jdbc-url=" + postgres.getJdbcUrl(),
-                    "spring.datasource.hikari.username=" + postgres.getUsername(),
-                    "spring.datasource.hikari.password=" + postgres.getPassword(),
+                    "spring.datasource.url=" + postgres.getJdbcUrl(),
+                    "spring.datasource.username=" + postgres.getUsername(),
+                    "spring.datasource.password=" + postgres.getPassword(),
                     "spring.flyway.url=" + postgres.getJdbcUrl(),
                     "spring.flyway.user=" + postgres.getUsername(),
                     "spring.flyway.password=" + postgres.getPassword()

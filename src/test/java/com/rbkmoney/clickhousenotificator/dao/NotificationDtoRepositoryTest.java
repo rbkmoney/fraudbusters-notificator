@@ -1,6 +1,5 @@
 package com.rbkmoney.clickhousenotificator.dao;
 
-import com.rbkmoney.clickhousenotificator.config.CustomHikariConfig;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
@@ -16,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@ContextConfiguration(classes = {NotificationDaoImpl.class, CustomHikariConfig.class})
+@ContextConfiguration(classes = {NotificationDaoImpl.class})
 public class NotificationDtoRepositoryTest extends AbstractPostgresIntegrationTest {
 
     @Autowired

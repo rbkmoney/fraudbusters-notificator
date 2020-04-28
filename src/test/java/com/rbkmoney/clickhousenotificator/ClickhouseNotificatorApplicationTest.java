@@ -89,9 +89,9 @@ public class ClickhouseNotificatorApplicationTest {
                     "clickhouse.db.url=" + clickHouseContainer.getJdbcUrl(),
                     "clickhouse.db.user=" + clickHouseContainer.getUsername(),
                     "clickhouse.db.password=" + clickHouseContainer.getPassword(),
-                    "spring.datasource.hikari.jdbc-url=" + postgres.getJdbcUrl(),
-                    "spring.datasource.hikari.username=" + postgres.getUsername(),
-                    "spring.datasource.hikari.password=" + postgres.getPassword(),
+                    "spring.datasource.url=" + postgres.getJdbcUrl(),
+                    "spring.datasource.username=" + postgres.getUsername(),
+                    "spring.datasource.password=" + postgres.getPassword(),
                     "spring.flyway.url=" + postgres.getJdbcUrl(),
                     "spring.flyway.user=" + postgres.getUsername(),
                     "spring.flyway.password=" + postgres.getPassword()
