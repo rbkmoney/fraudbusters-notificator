@@ -24,7 +24,7 @@ public class QueryValidator implements Validator {
             queryService.query(notification);
         } catch (Exception e) {
             log.warn("Error when validate query to DB: {} e:", notification.getQueryText(), e);
-            validateErrors.add(new ValidateError("Query has error! e: " + e.getMessage()));
+            validateErrors.add(new ValidateError("Query has error! e: " + e.getCause()));
         }
         return validateErrors;
     }
