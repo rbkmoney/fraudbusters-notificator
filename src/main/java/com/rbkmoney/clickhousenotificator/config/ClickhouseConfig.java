@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.clickhouse.ClickHouseDataSource;
 import ru.yandex.clickhouse.settings.ClickHouseQueryParam;
 
-import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
@@ -30,8 +28,6 @@ public class ClickhouseConfig {
     @Value("${clickhouse.db.compress}")
     private String compress;
 
-    @Bean
-    @Qualifier("clickHouseDataSource")
     public ClickHouseDataSource clickHouseDataSource() {
         Properties info = new Properties();
         info.setProperty(ClickHouseQueryParam.USER.getKey(), user);
@@ -43,8 +39,8 @@ public class ClickhouseConfig {
 
     @Bean
     @Qualifier("jdbcTemplateCH")
-    public JdbcTemplate jdbcTemplateCH(@Qualifier("clickHouseDataSource") DataSource clickHouseDataSource) {
-        return new JdbcTemplate(clickHouseDataSource);
+    public JdbcTemplate jdbcTemplateCH() {
+        return new JdbcTemplate(clickHouseDataSource());
     }
 
 }
