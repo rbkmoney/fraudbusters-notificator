@@ -7,9 +7,9 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class QueryPrepareServiceTest {
+public class QueryPreparationServiceTest {
 
-    QueryPrepareService queryPrepareService = new QueryPrepareService();
+    QueryPreparationService queryPrepareService = new QueryPreparationService();
 
     @Test
     public void prepare() {

@@ -6,19 +6,22 @@ import com.rbkmoney.clickhousenotificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Channel;
+import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.dao.pg.ChannelDaoImpl;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.QueryResult;
+import com.rbkmoney.clickhousenotificator.domain.ValidationResponse;
 import com.rbkmoney.clickhousenotificator.processor.QueryProcessorImpl;
+import com.rbkmoney.clickhousenotificator.resource.NotificationResourceImpl;
 import com.rbkmoney.clickhousenotificator.service.MailSenderServiceImpl;
 import com.rbkmoney.clickhousenotificator.service.NotificationServiceImpl;
 import com.rbkmoney.clickhousenotificator.util.ChInitiator;
-import com.rbkmoney.clickhousenotificator.util.NotificationFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
 import com.rbkmoney.damsel.schedule.SchedulatorSrv;
 import org.apache.thrift.TException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -31,6 +34,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 import org.testcontainers.containers.ClickHouseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -39,6 +43,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.rbkmoney.clickhousenotificator.util.NotificationFactory.createNotification;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -52,6 +57,8 @@ public class ClickhouseNotificatorApplicationTest {
     public static final String CHANNEL = "channel";
     @Autowired
     NotificationDao notificationDao;
+    @Autowired
+    NotificationResourceImpl notificationResource;
     @Autowired
     ChannelDaoImpl channelDao;
     @Autowired
@@ -104,11 +111,11 @@ public class ClickhouseNotificatorApplicationTest {
         channelDao.insert(channel);
 
         //create
-        notificationDao.insert(NotificationFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+        notificationResource.createOrUpdate(createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                 NotificationStatus.ACTIVE, CHANNEL, "shopId,currency"));
 
         //create
-        notificationDao.insert(NotificationFactory.createNotification("failedName", "select * from analytic.events_sink_refund",
+        notificationResource.createOrUpdate(createNotification("failedName", "select * from analytic.events_sink_refund",
                 NotificationStatus.ACTIVE, "errorChannel", "test"));
     }
 
@@ -134,6 +141,27 @@ public class ClickhouseNotificatorApplicationTest {
         assertEquals(1L, notificationByStatus.size());
 
         verify(mailSenderServiceImpl, times(1)).send(any());
+    }
+
+    @Test
+    public void validateTest() {
+        Notification notify = createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency");
+        ValidationResponse successNotify = notificationResource.validate(notify);
+
+        Assert.assertTrue(CollectionUtils.isEmpty(successNotify.getErrors()));
+
+        notify.setQueryText("SELECT test from analytic.events_sink_refund");
+        successNotify = notificationResource.validate(notify);
+
+        System.out.println(successNotify);
+        Assert.assertEquals(1, successNotify.getErrors().size());
+
+        successNotify = notificationResource.validate(createNotification(null, "",
+                NotificationStatus.ACTIVE, null, null));
+
+        System.out.println(successNotify);
+        Assert.assertEquals(5, successNotify.getErrors().size());
     }
 
 }

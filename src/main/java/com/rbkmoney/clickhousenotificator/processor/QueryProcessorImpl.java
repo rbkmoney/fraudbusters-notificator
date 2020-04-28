@@ -1,6 +1,5 @@
 package com.rbkmoney.clickhousenotificator.processor;
 
-import com.rbkmoney.clickhousenotificator.dao.ch.QueryRepository;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
@@ -9,7 +8,7 @@ import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
-import com.rbkmoney.clickhousenotificator.service.QueryPrepareService;
+import com.rbkmoney.clickhousenotificator.service.QueryService;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
 import com.rbkmoney.damsel.schedule.*;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +31,9 @@ public class QueryProcessorImpl implements ScheduledJobExecutorSrv.Iface {
 
     private final NotificationDao notificationDao;
     private final ReportNotificationDao reportNotificationDao;
-    private final QueryRepository queryRepository;
+    private final QueryService queryService;
     private final QueryResultSerde queryResultSerde;
     private final NotificationService notificationService;
-    private final QueryPrepareService queryPrepareService;
     private final Predicate<ReportModel> readyForNotifyFilter;
 
     @Override
@@ -76,8 +74,7 @@ public class QueryProcessorImpl implements ScheduledJobExecutorSrv.Iface {
     private Optional<ReportModel> queryForNotify(final ReportModel reportModel) {
         Notification notification = reportModel.getNotification();
         try {
-            String preparedQuery = queryPrepareService.prepare(notification);
-            List<Map<String, String>> queryResult = queryRepository.query(preparedQuery);
+            List<Map<String, String>> queryResult = queryService.query(notification);
             Report currentReport = new Report();
             currentReport.setNotificationName(notification.getName());
             currentReport.setResult(queryResultSerde.serialize(queryResult));

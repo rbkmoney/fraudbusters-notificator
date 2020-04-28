@@ -26,7 +26,7 @@ Date parameters:
 
 ```
 
-$currentDate: 
+$currentDate
 
 $currentMonth
 
