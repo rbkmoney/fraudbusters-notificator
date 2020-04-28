@@ -13,7 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class QueryService {
 
-    private final QueryPrepareService queryPrepareService;
+    private final QueryPreparationService queryPrepareService;
     private final QueryRepository queryRepository;
 
     public List<Map<String, String>> query(Notification notification) {

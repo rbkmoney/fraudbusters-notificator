@@ -2,7 +2,7 @@ package com.rbkmoney.clickhousenotificator.resource;
 
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
-import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
+import com.rbkmoney.clickhousenotificator.domain.ValidationResponse;
 
 public interface NotificationResource {
 
@@ -12,6 +12,6 @@ public interface NotificationResource {
 
     void setStatus(String id, NotificationStatus status);
 
-    ValidateResponse validate(Notification notificationDto);
+    ValidationResponse validate(Notification notificationDto);
 
 }

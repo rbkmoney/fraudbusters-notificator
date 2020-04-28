@@ -1,12 +1,12 @@
 package com.rbkmoney.clickhousenotificator.service.validator;
 
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
-import com.rbkmoney.clickhousenotificator.domain.ValidateError;
+import com.rbkmoney.clickhousenotificator.domain.ValidationError;
 
 import java.util.List;
 
 public interface Validator {
 
-    List<ValidateError> validate(Notification notification);
+    List<ValidationError> validate(Notification notification);
 
 }

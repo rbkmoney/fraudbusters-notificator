@@ -1,7 +1,7 @@
 package com.rbkmoney.clickhousenotificator.service.validator;
 
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
-import com.rbkmoney.clickhousenotificator.domain.ValidateError;
+import com.rbkmoney.clickhousenotificator.domain.ValidationError;
 import com.rbkmoney.clickhousenotificator.parser.PeriodParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,31 +20,31 @@ public class FieldValidator implements Validator {
     private final PeriodParser periodParser;
 
     @Override
-    public List<ValidateError> validate(Notification notification) {
-        List<ValidateError> validateErrors = new ArrayList<>();
+    public List<ValidationError> validate(Notification notification) {
+        List<ValidationError> validationErrors = new ArrayList<>();
         if (StringUtils.isEmpty(notification.getPeriod())) {
             log.warn(EMPTY_REQUIRED_FIELD_PERIOD);
-            validateErrors.add(new ValidateError(EMPTY_REQUIRED_FIELD_PERIOD));
+            validationErrors.add(new ValidationError(EMPTY_REQUIRED_FIELD_PERIOD));
         } else if (periodParser.parse(notification.getPeriod()) == 0L) {
             log.warn("Unknown period value!");
-            validateErrors.add(new ValidateError("Unknown period value: " + notification.getPeriod()));
+            validationErrors.add(new ValidationError("Unknown period value: " + notification.getPeriod()));
         }
 
-        validateField(validateErrors, notification.getGroupbyparams(), "Empty group params!", "Empty group params," +
+        validateField(validationErrors, notification.getGroupbyparams(), "Empty group params!", "Empty group params," +
                 " we sent many notify message to you," +
                 " because we can't find old data without this field!");
-        validateField(validateErrors, notification.getQueryText(), "Empty query text!", "Query text is required!");
-        validateField(validateErrors, notification.getName(), "Empty name!", "Name is required!");
-        validateField(validateErrors, notification.getAlertchanel(), "Empty channel!", "Alertchanel is required!");
-        validateField(validateErrors, notification.getFrequency(), "Empty frequency!", "frequency  is required!");
+        validateField(validationErrors, notification.getQueryText(), "Empty query text!", "Query text is required!");
+        validateField(validationErrors, notification.getName(), "Empty name!", "Name is required!");
+        validateField(validationErrors, notification.getAlertchanel(), "Empty channel!", "Alertchanel is required!");
+        validateField(validationErrors, notification.getFrequency(), "Empty frequency!", "frequency  is required!");
 
-        return validateErrors;
+        return validationErrors;
     }
 
-    private void validateField(List<ValidateError> validateErrors, String queryText, String s, String s2) {
+    private void validateField(List<ValidationError> validationErrors, String queryText, String log, String errorMessage) {
         if (StringUtils.isEmpty(queryText)) {
-            log.warn(s);
-            validateErrors.add(new ValidateError(s2));
+            FieldValidator.log.warn(log);
+            validationErrors.add(new ValidationError(errorMessage));
         }
     }
 }

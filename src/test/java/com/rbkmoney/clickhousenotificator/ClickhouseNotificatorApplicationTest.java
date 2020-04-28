@@ -12,7 +12,7 @@ import com.rbkmoney.clickhousenotificator.dao.pg.ChannelDaoImpl;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.QueryResult;
-import com.rbkmoney.clickhousenotificator.domain.ValidateResponse;
+import com.rbkmoney.clickhousenotificator.domain.ValidationResponse;
 import com.rbkmoney.clickhousenotificator.processor.QueryProcessorImpl;
 import com.rbkmoney.clickhousenotificator.resource.NotificationResourceImpl;
 import com.rbkmoney.clickhousenotificator.service.MailSenderServiceImpl;
@@ -147,7 +147,7 @@ public class ClickhouseNotificatorApplicationTest {
     public void validateTest() {
         Notification notify = createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                 NotificationStatus.ACTIVE, CHANNEL, "shopId,currency");
-        ValidateResponse successNotify = notificationResource.validate(notify);
+        ValidationResponse successNotify = notificationResource.validate(notify);
 
         Assert.assertTrue(CollectionUtils.isEmpty(successNotify.getErrors()));
 

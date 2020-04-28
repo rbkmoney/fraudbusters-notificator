@@ -12,7 +12,7 @@ import static java.time.format.DateTimeFormatter.ISO_DATE;
 
 @Service
 @RequiredArgsConstructor
-public class QueryPrepareService {
+public class QueryPreparationService {
 
     public static final String QUOTES = "'";
 
