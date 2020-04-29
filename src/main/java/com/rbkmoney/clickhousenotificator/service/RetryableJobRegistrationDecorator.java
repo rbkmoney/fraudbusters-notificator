@@ -52,7 +52,7 @@ public class RetryableJobRegistrationDecorator implements JobRegistration {
     private static final class SchedulerRegisterRetryListener extends RetryListenerSupport {
         @Override
         public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable) {
-            log.error("Exception while register 'close day' job. Retry count: {}", context.getRetryCount(), context.getLastThrowable());
+            log.error("Exception while register 'every minute' job. Retry count: {}", context.getRetryCount(), context.getLastThrowable());
         }
     }
 

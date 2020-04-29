@@ -1,0 +1,50 @@
+---
+version: '2'
+services:
+  clickhouse:
+    image: yandex/clickhouse-server
+    hostname: clickhouse
+    container_name: clickhouse
+    ports:
+      # - 9000:9000
+      - 8123:8123
+    volumes:
+      - ./clickhouse/data:/var/lib/clickhouse
+
+  postgres-ch-notificator:
+    container_name: postgres-ch-notificator
+    hostname: postgres-ch-notificator
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ch_notificator
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres/data/3:/data/postgres
+    restart: unless-stopped
+
+  clickhouse-notificator:
+    image: dr2.rbkmoney.com/rbkmoney/clickhouse-notificator:24bc8182b32c7a22f8ed6f45530c1b9cb5243107
+    hostname: clickhouse-notificator
+    container_name: clickhouse-notificator
+    environment:
+      clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
+      logging.level.com.rbkmoney.woody: "ERROR"
+      spring.datasource.url: "jdbc:postgresql://postgres-ch-notificator:5432/ch_notificator"
+    depends_on:
+      - clickhouse
+      - postgres-ch-notificator
+    ports:
+      - 8888:8022
+      - 8080:8080
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+
+volumes:
+  mi2: {}
