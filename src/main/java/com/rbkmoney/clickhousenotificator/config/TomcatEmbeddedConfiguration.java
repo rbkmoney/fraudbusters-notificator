@@ -46,7 +46,10 @@ public class TomcatEmbeddedConfiguration {
                                             FilterChain filterChain) throws ServletException, IOException {
                 String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
-                        && !(servletPath.startsWith(restEndpoint) || servletPath.startsWith(HEALTH))) {
+                        && !(servletPath.startsWith(restEndpoint)
+                        || servletPath.startsWith(HEALTH)
+                        || servletPath.startsWith("/swagger-ui.html")
+                        || servletPath.startsWith("/swagger-resources/"))) {
                     response.sendError(404, "Unknown address");
                     return;
                 }

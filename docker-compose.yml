@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
 
   clickhouse-notificator:
-    image: dr2.rbkmoney.com/rbkmoney/clickhouse-notificator:24bc8182b32c7a22f8ed6f45530c1b9cb5243107
+    image: dr2.rbkmoney.com/rbkmoney/clickhouse-notificator:c4d58ee2df6e95a5f1a78fe070456982ada0b074
     hostname: clickhouse-notificator
     container_name: clickhouse-notificator
     environment:
