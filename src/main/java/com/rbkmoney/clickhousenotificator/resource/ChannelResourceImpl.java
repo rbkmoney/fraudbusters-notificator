@@ -12,6 +12,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("ch-manager")
 public class ChannelResourceImpl implements ChannelResource {
 
     private final ChannelDao channelDao;

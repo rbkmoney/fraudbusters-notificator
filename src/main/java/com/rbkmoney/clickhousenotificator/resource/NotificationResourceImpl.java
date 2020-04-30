@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("ch-manager")
 public class NotificationResourceImpl implements NotificationResource {
 
     private final NotificationDao notificationDao;
