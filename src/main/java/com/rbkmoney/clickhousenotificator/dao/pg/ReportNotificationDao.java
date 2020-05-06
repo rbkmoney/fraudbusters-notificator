@@ -16,7 +16,7 @@ public interface ReportNotificationDao {
 
     void remove(Report listRecord);
 
-    Report getLastByNotification(String name);
+    Report getLastSendByName(String name);
 
     Report getLastByNotificationAndStatus(String name, ReportStatus status);
 
