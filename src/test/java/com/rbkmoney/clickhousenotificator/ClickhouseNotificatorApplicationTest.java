@@ -100,7 +100,7 @@ public class ClickhouseNotificatorApplicationTest {
     }
 
     @Before
-    public void init() throws SQLException {
+    public void init() throws SQLException, JsonProcessingException {
         ChInitiator.initChDB(clickHouseContainer);
         Channel channel = new Channel();
         channel.setName(CHANNEL);
@@ -111,8 +111,9 @@ public class ClickhouseNotificatorApplicationTest {
         channelDao.insert(channel);
 
         //create
-        notificationResource.createOrUpdate(createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
-                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency"));
+        Notification successNotify = createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency");
+        notificationResource.createOrUpdate(successNotify);
 
         //create
         notificationResource.createOrUpdate(createNotification("failedName", "select * from analytic.events_sink_refund",

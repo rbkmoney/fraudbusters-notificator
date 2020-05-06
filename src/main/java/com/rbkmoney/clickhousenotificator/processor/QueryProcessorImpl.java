@@ -64,7 +64,7 @@ public class QueryProcessorImpl implements ScheduledJobExecutorSrv.Iface {
     }
 
     private ReportModel initReportModel(final Notification notification) {
-        Report lastByNotification = reportNotificationDao.getLastByNotification(notification.getName());
+        Report lastByNotification = reportNotificationDao.getLastSendByName(notification.getName());
         return ReportModel.builder()
                 .notification(notification)
                 .lastReport(lastByNotification)

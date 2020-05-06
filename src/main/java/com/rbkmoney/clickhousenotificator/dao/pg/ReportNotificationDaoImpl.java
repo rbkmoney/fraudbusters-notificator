@@ -61,14 +61,18 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
     }
 
     @Override
-    public Report getLastByNotification(String name) {
+    public Report getLastSendByName(String name) {
         DSLContext dslContext = getDslContext();
         SelectConditionStep<ReportRecord> where = dslContext
                 .selectFrom(REPORT)
                 .where(REPORT.ID.eq(
                         dslContext.select(DSL.max(REPORT.ID))
                                 .from(REPORT)
-                                .where(REPORT.NOTIFICATION_NAME.eq(name))));
+                                .where(REPORT.NOTIFICATION_NAME.eq(name)
+                                        .and(REPORT.STATUS.eq(ReportStatus.send))
+                                )
+                        )
+                );
         return fetchOne(where, listRecordRowMapper);
     }
 
