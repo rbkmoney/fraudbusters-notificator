@@ -68,7 +68,9 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
                 .where(REPORT.ID.eq(
                         dslContext.select(DSL.max(REPORT.ID))
                                 .from(REPORT)
-                                .where(REPORT.NOTIFICATION_NAME.eq(name))));
+                                .where(REPORT.NOTIFICATION_NAME.eq(name))
+                                .and(REPORT.STATUS.eq(ReportStatus.send)))
+                );
         return fetchOne(where, listRecordRowMapper);
     }
 
