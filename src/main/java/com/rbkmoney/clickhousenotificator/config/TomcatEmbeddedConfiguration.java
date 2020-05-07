@@ -49,6 +49,8 @@ public class TomcatEmbeddedConfiguration {
                         && !(servletPath.startsWith(restEndpoint)
                         || servletPath.startsWith(HEALTH)
                         || servletPath.startsWith("/swagger-ui.html")
+                        || servletPath.startsWith("/*")
+                        || servletPath.startsWith("/v2")
                         || servletPath.startsWith("/swagger-resources/"))) {
                     response.sendError(404, "Unknown address");
                     return;

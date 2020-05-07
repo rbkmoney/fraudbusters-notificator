@@ -13,19 +13,8 @@ import javax.annotation.PreDestroy;
 @SpringBootApplication
 public class ClickhouseNotificatorApplication extends SpringApplication {
 
-    @Autowired
-    private JobRegistration retryableJobRegistrationDecorator;
-
-    @Autowired
-    private SchedulatorJobProperties schedulatorJobProperties;
-
     public static void main(String[] args) {
         SpringApplication.run(ClickhouseNotificatorApplication.class, args);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        retryableJobRegistrationDecorator.deregisterJob(schedulatorJobProperties.getJobId());
     }
 
 }
