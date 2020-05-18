@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.Filter;
@@ -16,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Configuration
 public class TomcatEmbeddedConfiguration {
@@ -28,6 +30,9 @@ public class TomcatEmbeddedConfiguration {
     @Value("/${server.rest.endpoint}/")
     private String restEndpoint;
 
+    @Value("${swagger.paths}")
+    private List<String> swaggerPaths;
+
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
@@ -35,6 +40,15 @@ public class TomcatEmbeddedConfiguration {
         connector.setPort(restPort);
         tomcat.addAdditionalTomcatConnectors(connector);
         return tomcat;
+    }
+
+    @Bean
+    public FilterRegistrationBean<SwaggerFilter> swaggerFilterRegistrationBean() {
+        FilterRegistrationBean<SwaggerFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new SwaggerFilter());
+        filterRegistrationBean.setOrder(-100);
+        filterRegistrationBean.setName("SwaggerFilter");
+        return filterRegistrationBean;
     }
 
     @Bean
@@ -47,11 +61,7 @@ public class TomcatEmbeddedConfiguration {
                 String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
                         && !(servletPath.startsWith(restEndpoint)
-                        || servletPath.startsWith(HEALTH)
-                        || servletPath.startsWith("/swagger-ui.html")
-                        || servletPath.startsWith("/*")
-                        || servletPath.startsWith("/v2")
-                        || servletPath.startsWith("/swagger-resources/"))) {
+                        || servletPath.startsWith(HEALTH))) {
                     response.sendError(404, "Unknown address");
                     return;
                 }
@@ -100,5 +110,25 @@ public class TomcatEmbeddedConfiguration {
         filterRegistrationBean.setName("woodyFilter");
         filterRegistrationBean.addUrlPatterns(restEndpoint + "*");
         return filterRegistrationBean;
+    }
+
+    private class SwaggerFilter extends OncePerRequestFilter {
+
+        private AntPathMatcher pathMatcher = new AntPathMatcher();
+
+        @Override
+        protected void doFilterInternal(HttpServletRequest httpServletRequest,
+                                        HttpServletResponse httpServletResponse,
+                                        FilterChain filterChain) throws ServletException, IOException {
+            boolean isSwaggerPath = swaggerPaths.stream()
+                    .anyMatch(path -> pathMatcher.match(path, httpServletRequest.getServletPath()));
+            boolean isSwaggerPort = httpServletRequest.getLocalPort() == restPort;
+
+            if(isSwaggerPath == isSwaggerPort) {
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+            } else {
+                httpServletResponse.sendError(404);
+            }
+        }
     }
 }

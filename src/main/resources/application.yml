@@ -76,3 +76,10 @@ service:
   schedulator:
     url: http://schedulator:8022/v1/schedulator
     networkTimeout: 5000
+swagger:
+  paths: |
+    /swagger-ui.html,
+    /webjars/springfox-swagger-ui/**/*,
+    /swagger-resources,
+    /swagger-resources/**/*,
+    /v2/api-docs
