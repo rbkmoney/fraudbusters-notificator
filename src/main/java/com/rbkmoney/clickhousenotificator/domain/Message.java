@@ -8,7 +8,8 @@ import lombok.Data;
 public class Message {
 
     private String from;
-    private String to;
+    private String[] to;
+    private String toCopy;
     private String subject;
     private String content;
 
