@@ -24,6 +24,7 @@ public class NotificationFactory {
         notification.setStatus(status);
         notification.setTemplateType(TemplateType.MAIL_FORM.name());
         notification.setTemplateValue("<>");
+        notification.setSubject("Тестирование сообщений");
         return notification;
     }
 

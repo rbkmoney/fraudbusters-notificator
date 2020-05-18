@@ -2,10 +2,8 @@ package com.rbkmoney.clickhousenotificator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rbkmoney.clickhousenotificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
-import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.dao.pg.ChannelDaoImpl;
@@ -18,6 +16,7 @@ import com.rbkmoney.clickhousenotificator.resource.NotificationResourceImpl;
 import com.rbkmoney.clickhousenotificator.service.MailSenderServiceImpl;
 import com.rbkmoney.clickhousenotificator.service.NotificationServiceImpl;
 import com.rbkmoney.clickhousenotificator.util.ChInitiator;
+import com.rbkmoney.clickhousenotificator.util.ChannelFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
 import com.rbkmoney.damsel.schedule.SchedulatorSrv;
 import org.apache.thrift.TException;
@@ -40,7 +39,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.rbkmoney.clickhousenotificator.util.NotificationFactory.createNotification;
@@ -54,7 +52,6 @@ import static org.mockito.Mockito.verify;
 @ContextConfiguration(initializers = ClickhouseNotificatorApplicationTest.Initializer.class)
 public class ClickhouseNotificatorApplicationTest {
 
-    public static final String CHANNEL = "channel";
     @Autowired
     NotificationDao notificationDao;
     @Autowired
@@ -102,17 +99,11 @@ public class ClickhouseNotificatorApplicationTest {
     @Before
     public void init() throws SQLException, JsonProcessingException {
         ChInitiator.initChDB(clickHouseContainer);
-        Channel channel = new Channel();
-        channel.setName(CHANNEL);
-        channel.setDestination("test@mail.ru");
-        channel.setSubject("Тесты");
-        channel.setCreatedAt(LocalDateTime.now());
-        channel.setType(ChannelType.mail);
-        channelDao.insert(channel);
+        channelDao.insert(ChannelFactory.createChannel());
 
         //create
         Notification successNotify = createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
-                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency");
+                NotificationStatus.ACTIVE, ChannelFactory.CHANNEL, "shopId,currency");
         notificationResource.createOrUpdate(successNotify);
 
         //create
@@ -147,7 +138,7 @@ public class ClickhouseNotificatorApplicationTest {
     @Test
     public void validateTest() {
         Notification notify = createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
-                NotificationStatus.ACTIVE, CHANNEL, "shopId,currency");
+                NotificationStatus.ACTIVE, ChannelFactory.CHANNEL, "shopId,currency");
         ValidationResponse successNotify = notificationResource.validate(notify);
 
         Assert.assertTrue(CollectionUtils.isEmpty(successNotify.getErrors()));
