@@ -11,6 +11,7 @@ public class Message {
     private String[] to;
     private String subject;
     private String content;
+    private Attachment attachment;
 
     private String partyId;
     private long claimId;

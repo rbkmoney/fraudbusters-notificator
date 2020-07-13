@@ -15,6 +15,7 @@ import com.rbkmoney.clickhousenotificator.processor.QueryProcessorImpl;
 import com.rbkmoney.clickhousenotificator.resource.NotificationResourceImpl;
 import com.rbkmoney.clickhousenotificator.service.MailSenderServiceImpl;
 import com.rbkmoney.clickhousenotificator.service.NotificationServiceImpl;
+import com.rbkmoney.clickhousenotificator.service.factory.CsvAttachmentFactory;
 import com.rbkmoney.clickhousenotificator.util.ChInitiator;
 import com.rbkmoney.clickhousenotificator.util.ChannelFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
@@ -111,6 +112,9 @@ public class ClickhouseNotificatorApplicationTest {
                 NotificationStatus.ACTIVE, "errorChannel", "test"));
     }
 
+    @Autowired
+    private CsvAttachmentFactory csvAttachmentFactory;
+
     @Test
     public void contextLoads() throws JsonProcessingException, InterruptedException, TException {
         queryProcessor.executeJob(null);
@@ -120,6 +124,8 @@ public class ClickhouseNotificatorApplicationTest {
         String result = notificationByStatus.get(0).getResult();
         QueryResult queryResult = objectMapper.readValue(result, QueryResult.class);
         assertEquals("ad8b7bfd-0760-4781-a400-51903ee8e504", queryResult.getResults().get(0).get("shopId"));
+
+        System.out.println(csvAttachmentFactory.create(queryResult.getResults()));
 
         queryProcessor.executeJob(null);
 

@@ -50,6 +50,7 @@ mail:
   smtp:
     auth: false
     timeout: 30000
+    from-address: "NotificationService@rbkmoney.com"
     starttls:
       enable: true
 ---

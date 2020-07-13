@@ -1,13 +1,16 @@
-package com.rbkmoney.clickhousenotificator.service;
+package com.rbkmoney.clickhousenotificator.service.factory;
 
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.clickhousenotificator.dao.pg.ChannelDao;
+import com.rbkmoney.clickhousenotificator.domain.Attachment;
 import com.rbkmoney.clickhousenotificator.domain.Message;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.exception.UnknownRecipientException;
+import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,9 +21,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MailFactory {
 
-    public static final String NOTIFICATION_SERVICE_RBKMONEY_COM = "NotificationService@rbkmoney.com";
+    @Value("${mail.smtp.from-address}")
+    public String fromAddress;
 
     private final ChannelDao channelDao;
+    private final AttachmentFactory attachmentFactory;
+    private final QueryResultSerde queryResultSerde;
 
     public Optional<Message> create(ReportModel reportModel) {
         String alertchanel = reportModel.getNotification().getAlertchanel();
@@ -29,12 +35,24 @@ public class MailFactory {
             log.warn("Not found channel with name: {}", alertchanel);
             return Optional.empty();
         }
+        String subject = initSubject(reportModel, channel);
         return Optional.of(Message.builder()
-                .content(reportModel.getCurrentReport().getResult())
+                .content(reportModel.getNotification().getTemplateValue())
                 .to(initRecipient(channel))
-                .subject(initSubject(reportModel, channel))
-                .from(NOTIFICATION_SERVICE_RBKMONEY_COM)
+                .subject(subject)
+                .from(fromAddress)
+                .attachment(initAttachment(reportModel, subject))
                 .build());
+    }
+
+    private Attachment initAttachment(ReportModel reportModel, String subject) {
+        return queryResultSerde.deserialize(reportModel.getCurrentReport().getResult())
+                .map(queryResult ->
+                        Attachment.builder()
+                                .content(attachmentFactory.create(queryResult.getResults()))
+                                .fileName(attachmentFactory.createNameOfAttachment(subject))
+                                .build())
+                .orElse(null);
     }
 
     private String initSubject(ReportModel reportModel, Channel channel) {

@@ -4,6 +4,7 @@ import com.rbkmoney.clickhousenotificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
+import com.rbkmoney.clickhousenotificator.service.factory.MailFactory;
 import com.rbkmoney.clickhousenotificator.service.filter.ChangeQueryResultFilter;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
 import lombok.RequiredArgsConstructor;
