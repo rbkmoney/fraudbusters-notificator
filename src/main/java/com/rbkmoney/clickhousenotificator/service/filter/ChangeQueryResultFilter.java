@@ -55,8 +55,8 @@ public class ChangeQueryResultFilter implements Predicate<ReportModel> {
     private String concatConcreteValues(List<String> keys, Map<String, String> map) {
         return map.entrySet().stream()
                 .filter(entry -> keys.contains(entry.getKey()))
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .map(entry -> entry.getValue())
+                .sorted(Map.Entry.comparingByKey())
+                .map(Map.Entry::getValue)
                 .collect(Collectors.joining("-"));
     }
 

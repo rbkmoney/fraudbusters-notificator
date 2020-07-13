@@ -27,7 +27,6 @@ public class NotificationServiceImpl implements NotificationService {
         Report report = reportModel.getCurrentReport();
         if (!changeQueryResultFilter.test(reportModel)) {
             report.setStatus(ReportStatus.skipped);
-            reportNotificationDao.insert(report);
             log.info("NotificationProcessorImpl skipped: {}", report);
             return;
         }
