@@ -121,6 +121,7 @@ public class ClickhouseNotificatorApplicationTest {
         QueryResult queryResult = objectMapper.readValue(result, QueryResult.class);
         assertEquals("ad8b7bfd-0760-4781-a400-51903ee8e504", queryResult.getResults().get(0).get("shopId"));
 
+
         queryProcessor.executeJob(null);
 
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
@@ -130,7 +131,7 @@ public class ClickhouseNotificatorApplicationTest {
 
         queryProcessor.executeJob(null);
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
-        assertEquals(1L, notificationByStatus.size());
+        assertEquals(0L, notificationByStatus.size());
 
         verify(mailSenderServiceImpl, times(1)).send(any());
     }
