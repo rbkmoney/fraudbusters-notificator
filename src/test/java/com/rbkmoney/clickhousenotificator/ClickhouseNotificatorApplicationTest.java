@@ -131,7 +131,7 @@ public class ClickhouseNotificatorApplicationTest {
 
         queryProcessor.executeJob(null);
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
-        assertEquals(1L, notificationByStatus.size());
+        assertEquals(0L, notificationByStatus.size());
 
         verify(mailSenderServiceImpl, times(1)).send(any());
     }
