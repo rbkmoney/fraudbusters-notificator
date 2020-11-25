@@ -50,6 +50,7 @@ public class NotificationResourceImpl implements NotificationResource {
         return notification;
     }
 
+    // должен быть POST
     @Override
     @GetMapping(value = "/notification/{name}/{status}")
     public void setStatus(@Validated @PathVariable String name,
