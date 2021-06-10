@@ -41,9 +41,11 @@ public class FieldValidator implements Validator {
         return validationErrors;
     }
 
-    private void validateField(List<ValidationError> validationErrors, String queryText, String log,
+    private void validateField(List<ValidationError> validationErrors,
+                               String queryText,
+                               String log,
                                String errorMessage) {
-        if (StringUtils.isEmpty(queryText)) {
+        if (StringUtils.hasText(queryText)) {
             FieldValidator.log.warn(log);
             validationErrors.add(new ValidationError(errorMessage));
         }
