@@ -107,13 +107,14 @@ public class ClickhouseNotificatorApplicationTest {
         notificationResource.createOrUpdate(successNotify);
 
         //create
-        notificationResource.createOrUpdate(createNotification("failedName", "select * from analytic.events_sink_refund",
-                NotificationStatus.ACTIVE, "errorChannel", "test"));
+        notificationResource
+                .createOrUpdate(createNotification("failedName", "select * from analytic.events_sink_refund",
+                        NotificationStatus.ACTIVE, "errorChannel", "test"));
     }
 
     @Test
     public void contextLoads() throws JsonProcessingException, InterruptedException, TException {
-        queryProcessor.executeJob(null);
+        queryProcessor.process();
 
         List<Report> notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.send);
 
@@ -122,14 +123,14 @@ public class ClickhouseNotificatorApplicationTest {
         assertEquals("ad8b7bfd-0760-4781-a400-51903ee8e504", queryResult.getResults().get(0).get("shopId"));
 
 
-        queryProcessor.executeJob(null);
+        queryProcessor.process();
 
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
         assertEquals(0L, notificationByStatus.size());
 
         Thread.sleep(1000L);
 
-        queryProcessor.executeJob(null);
+        queryProcessor.process();
         notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
         assertEquals(0L, notificationByStatus.size());
 
