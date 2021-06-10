@@ -22,7 +22,7 @@ public class FieldValidator implements Validator {
     @Override
     public List<ValidationError> validate(Notification notification) {
         List<ValidationError> validationErrors = new ArrayList<>();
-        if (StringUtils.isEmpty(notification.getPeriod())) {
+        if (!StringUtils.hasLength(notification.getPeriod())) {
             log.warn(EMPTY_REQUIRED_FIELD_PERIOD);
             validationErrors.add(new ValidationError(EMPTY_REQUIRED_FIELD_PERIOD));
         } else if (periodParser.parse(notification.getPeriod()) == 0L) {
@@ -45,7 +45,7 @@ public class FieldValidator implements Validator {
                                String queryText,
                                String log,
                                String errorMessage) {
-        if (StringUtils.hasText(queryText)) {
+        if (!StringUtils.hasLength(queryText)) {
             FieldValidator.log.warn(log);
             validationErrors.add(new ValidationError(errorMessage));
         }
