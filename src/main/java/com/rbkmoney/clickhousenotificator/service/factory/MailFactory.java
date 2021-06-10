@@ -21,12 +21,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MailFactory {
 
-    @Value("${mail.smtp.from-address}")
-    public String fromAddress;
-
     private final ChannelDao channelDao;
     private final AttachmentFactory attachmentFactory;
     private final QueryResultSerde queryResultSerde;
+    @Value("${mail.smtp.from-address}")
+    public String fromAddress;
 
     public Optional<Message> create(ReportModel reportModel) {
         String alertchanel = reportModel.getNotification().getAlertchanel();

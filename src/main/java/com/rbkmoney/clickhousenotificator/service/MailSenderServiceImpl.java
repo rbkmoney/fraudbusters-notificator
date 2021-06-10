@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -31,8 +32,9 @@ public class MailSenderServiceImpl implements MailSenderService {
             mailSender.send(mimeMessage);
             return true;
         } catch (MessagingException | MailException | IOException ex) {
-            throw new MailSendException(String.format("Received exception while sending message to mail, partyId=%s, claimId=%s, email=%s",
-                    message.getPartyId(), message.getClaimId(), message.getTo()), ex);
+            throw new MailSendException(
+                    String.format("Received exception while sending message to mail, partyId=%s, claimId=%s, email=%s",
+                            message.getPartyId(), message.getClaimId(), message.getTo()), ex);
         }
     }
 
@@ -44,7 +46,8 @@ public class MailSenderServiceImpl implements MailSenderService {
         helper.setSubject(message.getSubject());
         helper.setText(message.getContent(), false);
         if (message.getAttachment() != null) {
-            helper.addAttachment(message.getAttachment().getFileName(), new ByteArrayResource(message.getAttachment().getContent().getBytes()));
+            helper.addAttachment(message.getAttachment().getFileName(),
+                    new ByteArrayResource(message.getAttachment().getContent().getBytes()));
         }
         return mimeMessage;
     }

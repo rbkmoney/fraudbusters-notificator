@@ -10,7 +10,11 @@ import java.time.LocalDateTime;
 public class NotificationFactory {
 
     @NotNull
-    public static Notification createNotification(String name, String select, NotificationStatus status, String channel, String groupParams) {
+    public static Notification createNotification(String name,
+                                                  String select,
+                                                  NotificationStatus status,
+                                                  String channel,
+                                                  String groupParams) {
         Notification notification = new Notification();
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
@@ -29,7 +33,10 @@ public class NotificationFactory {
     }
 
     @NotNull
-    public static Notification createNotification(String select, NotificationStatus status, String channel, String groupParams) {
+    public static Notification createNotification(String select,
+                                                  NotificationStatus status,
+                                                  String channel,
+                                                  String groupParams) {
         return createNotification("test", select, status, channel, groupParams);
     }
 

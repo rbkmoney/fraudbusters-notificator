@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -23,7 +26,8 @@ public class ChangeQueryResultFilter implements Predicate<ReportModel> {
         Report oldReport = reportModel.getLastReport();
         if (oldReport != null) {
             Optional<QueryResult> oldReportResult = queryResultSerde.deserialize(oldReport.getResult());
-            Optional<QueryResult> newReportResult = queryResultSerde.deserialize(reportModel.getCurrentReport().getResult());
+            Optional<QueryResult> newReportResult =
+                    queryResultSerde.deserialize(reportModel.getCurrentReport().getResult());
             if (newReportResult.isPresent()) {
                 if (oldReportResult.isEmpty()) {
                     return true;

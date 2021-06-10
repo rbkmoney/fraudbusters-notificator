@@ -18,7 +18,6 @@ import com.rbkmoney.clickhousenotificator.service.NotificationServiceImpl;
 import com.rbkmoney.clickhousenotificator.util.ChInitiator;
 import com.rbkmoney.clickhousenotificator.util.ChannelFactory;
 import com.rbkmoney.clickhousenotificator.util.TestChQuery;
-import com.rbkmoney.damsel.schedule.SchedulatorSrv;
 import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,8 +68,6 @@ public class ClickhouseNotificatorApplicationTest {
 
     @MockBean
     MailSenderServiceImpl mailSenderServiceImpl;
-    @MockBean
-    SchedulatorSrv.Iface schedulatorClient;
 
     @ClassRule
     public static ClickHouseContainer clickHouseContainer = new ClickHouseContainer();

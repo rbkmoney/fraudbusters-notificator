@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+
 import java.util.List;
 
 import static com.rbkmoney.clickhousenotificator.dao.domain.Tables.CHANNEL;

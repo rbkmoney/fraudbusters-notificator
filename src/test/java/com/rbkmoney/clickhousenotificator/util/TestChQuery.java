@@ -40,7 +40,8 @@ public class TestChQuery {
             "            t," +
             "            currency," +
             "            shopId" +
-            "        HAVING (sm_all > 1 and currency = 'RUB') OR(sm_all > 1 and currency = 'USD') OR(sm_all > 1 and currency = 'EUR')" +
+            "        HAVING (sm_all > 1 and currency = 'RUB') OR(sm_all > 1 and currency = 'USD') " +
+            "OR (sm_all > 1 and currency = 'EUR')" +
             ") USING " +
             "        t," +
             "        shopId," +

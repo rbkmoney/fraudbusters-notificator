@@ -17,7 +17,8 @@ public class FindChannelException extends RuntimeException {
         super(cause);
     }
 
-    public FindChannelException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public FindChannelException(String message, Throwable cause, boolean enableSuppression,
+                                boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
