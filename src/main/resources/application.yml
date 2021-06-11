@@ -2,6 +2,7 @@ server:
   port: '@server.port@'
   rest:
     port: '@server.rest.port@'
+    endpoint: ch-manager
 management:
   security:
     flag: false
