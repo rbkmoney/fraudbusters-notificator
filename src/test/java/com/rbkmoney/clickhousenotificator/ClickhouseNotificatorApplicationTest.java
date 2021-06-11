@@ -142,7 +142,7 @@ public class ClickhouseNotificatorApplicationTest {
 
         Assert.assertTrue(CollectionUtils.isEmpty(successNotify.getErrors()));
 
-        notify.setQueryText("SELECT test from analytic.events_sink_refund");
+        notify.setQueryText("SELECT partyId from analytic.events_sink_refund");
         successNotify = notificationResource.validate(notify);
 
         System.out.println(successNotify);
