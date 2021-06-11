@@ -13,8 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Clickhouse notificator</name>
-    <description></description>
+    <name>clickhouse_notificator</name>
 
     <properties>
         <server.port>8022</server.port>
@@ -25,7 +24,6 @@
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
         <clickhouse-jdbc.version>0.1.54</clickhouse-jdbc.version>
 
-        <flyway.version>5.2.3</flyway.version>
         <db.name>ch_notificator</db.name>
         <db.port>5432</db.port>
         <db.url>jdbc:postgresql://localhost:${db.port}/${db.name}</db.url>
@@ -213,7 +211,6 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway.version}</version>
                 <configuration>
                     <url>${db.url}</url>
                     <user>${db.user}</user>
@@ -238,7 +235,6 @@
             <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
-                <version>${jooq.version}</version>
                 <configuration>
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
@@ -325,24 +321,6 @@
                     <execution>
                         <goals>
                             <goal>process</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <configuration>
-                    <destFile>${sonar.jacoco.reportPaths}</destFile>
-                    <append>true</append>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                 </executions>
