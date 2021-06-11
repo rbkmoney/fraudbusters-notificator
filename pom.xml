@@ -30,8 +30,7 @@
         <db.user>postgres</db.user>
         <db.password>postgres</db.password>
         <db.schema>ch_notificator</db.schema>
-        <db.comc67c2590c921274e0d03fbdb437c893bb035fba4mon.lib.version>0.0.2-SNAPSHOT
-        </db.comc67c2590c921274e0d03fbdb437c893bb035fba4mon.lib.version>
+        <db.common.lib.version>0.0.2-SNAPSHOT</db.common.lib.version>
         <shedlock-provider-jdbc-template.version>4.24.0</shedlock-provider-jdbc-template.version>
     </properties>
 
