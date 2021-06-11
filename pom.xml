@@ -22,6 +22,7 @@
         <server.rest.port>8080</server.rest.port>
         <exposed.ports>${server.port} ${management.port}  ${server.rest.port}</exposed.ports>
         <dockerfile.base.service.tag>c0612d6052ac049496b72a23a04acb142035f249</dockerfile.base.service.tag><dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
+        <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
         <shared.resources.version>0.3.6</shared.resources.version>
         <sonar.jacoco.reportPaths>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPaths>
         <clickhouse-jdbc.version>0.1.54</clickhouse-jdbc.version>
