@@ -36,8 +36,8 @@ public class QueryProcessorImpl implements QueryProcessor {
     private final Predicate<ReportModel> readyForNotifyFilter;
 
     @Override
-    @Scheduled(cron = "${schedule.cron}")
-    @SchedulerLock(name = "TaskScheduler_scheduledTask", lockAtLeastFor = "PT5M", lockAtMostFor = "PT5M")
+    @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
+    @SchedulerLock(name = "TaskScheduler_invoke_process")
     public void process() {
         log.info("QueryProcessorImpl start process!");
         List<Notification> activeNotifications = notificationDao.getByStatus(NotificationStatus.ACTIVE);

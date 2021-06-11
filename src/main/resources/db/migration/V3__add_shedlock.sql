@@ -1,4 +1,4 @@
-CREATE TABLE shedlock
+CREATE TABLE ch_notificator.shedlock
 (
     name       VARCHAR(64),
     lock_until TIMESTAMP(3) NULL,
