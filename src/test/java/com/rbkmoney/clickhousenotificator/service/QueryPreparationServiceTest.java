@@ -15,14 +15,14 @@ public class QueryPreparationServiceTest {
     public void prepare() {
         Notification notification = new Notification();
         notification.setQueryText("select * from analytic.events_sink_refund " +
-                "where $currentMonth <= toMoth(timestamp) " +
+                "where $currentMonth <= toMonth(timestamp) " +
                 "and $currentDate <= timestamp " +
                 "and $currentYear <= toYear(timestamp)");
         String prepare = queryPrepareService.prepare(notification);
 
         LocalDateTime now = LocalDateTime.now();
         Assert.assertEquals("select * from analytic.events_sink_refund where " + now.getMonth().getValue() +
-                " <= toMoth(timestamp) " +
+                " <= toMonth(timestamp) " +
                 "and '" + now.format(DateTimeFormatter.ISO_DATE) + "' <= timestamp " +
                 "and " + now.getYear() + " <= toYear(timestamp)", prepare);
     }
