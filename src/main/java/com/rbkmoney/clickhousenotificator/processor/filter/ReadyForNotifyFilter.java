@@ -21,8 +21,9 @@ public class ReadyForNotifyFilter implements Predicate<ReportModel> {
     public boolean test(ReportModel reportModel) {
         Notification notification = reportModel.getNotification();
         Report lastByNotification = reportModel.getLastReport();
-        if (lastByNotification == null)
+        if (lastByNotification == null) {
             return true;
+        }
         boolean result = timePeriodCalculator.calculate(notification).isAfter(lastByNotification.getCreatedAt());
         log.info("QueryProcessorImpl filter result: {} notification: {} ", result, notification);
         return result;

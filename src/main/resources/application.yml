@@ -3,16 +3,30 @@ server:
   rest:
     port: '@server.rest.port@'
     endpoint: ch-manager
----
 management:
   security:
     flag: false
+  server:
+    port: '@management.port@'
   metrics:
     export:
       statsd:
-        enabled: false
         flavor: etsy
-  endpoint.health.show-details: always
+        enabled: false
+      prometheus:
+        enabled: false
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
 ---
 spring:
   application:
@@ -30,7 +44,7 @@ spring:
       idle-timeout: 30000
       maximum-pool-size: 10
     flyway:
-        url: "jdbc:postgresql://localhost:5432/ch_notificator"
+      url: "jdbc:postgresql://localhost:5432/ch_notificator"
 ---
 info:
   version: '@project.version@'
@@ -61,22 +75,6 @@ clickhouse.db:
   connection.timeout: 50000
   compress: false
 ---
-schedulator:
-  enabled: true
-  register-retry:
-    max-attempts: 10
-    back-off-period: 60000
-  job:
-    job-id: closeRsbTerminalJob_V2
-    revision-id: 16396
-    scheduler-id: 64
-    calendar-id: 1
-    service-callback-path: https://localhost:8022/v1/scheduled_notify
----
-service:
-  schedulator:
-    url: http://schedulator:8022/v1/schedulator
-    networkTimeout: 5000
 swagger:
   paths: |
     /swagger-ui.html,
@@ -84,3 +82,7 @@ swagger:
     /swagger-resources,
     /swagger-resources/**/*,
     /v2/api-docs
+---
+fixedDelay:
+  in:
+    milliseconds: "600000"
