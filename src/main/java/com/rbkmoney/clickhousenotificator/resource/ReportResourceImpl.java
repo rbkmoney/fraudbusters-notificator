@@ -22,6 +22,7 @@ public class ReportResourceImpl implements ReportResource {
 
     private final ReportNotificationDao reportNotificationDao;
 
+    //вынес бы в отдельную сущность Filter и сделал бы поиск более гибкий, уродливый эндпоинт
     @Override
     @GetMapping(value = "/report/{status}/{from}")
     public List<Report> findReportsByStatusAndFromTime(@Validated @PathVariable ReportStatus status,
