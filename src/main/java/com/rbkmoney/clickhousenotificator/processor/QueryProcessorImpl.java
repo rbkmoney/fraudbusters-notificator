@@ -64,7 +64,7 @@ public class QueryProcessorImpl implements QueryProcessor {
     private Optional<ReportModel> queryForNotify(final ReportModel reportModel) {
         Notification notification = reportModel.getNotification();
         try {
-            List<Map<String, String>> queryResult = queryService.query(notification);
+            List<Map<String, String>> queryResult = queryService.query(notification.getQueryText());
             Report currentReport = new Report();
             currentReport.setNotificationName(notification.getName());
             currentReport.setResult(queryResultSerde.serialize(queryResult));

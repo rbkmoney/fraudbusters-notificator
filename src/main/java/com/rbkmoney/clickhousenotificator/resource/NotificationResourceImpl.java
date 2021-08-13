@@ -75,7 +75,7 @@ public class NotificationResourceImpl implements NotificationResource {
             return validationResponse;
         }
 
-        List<Map<String, String>> result = queryService.query(notification);
+        List<Map<String, String>> result = queryService.query(notification.getQueryText());
         validationResponse.setResult(String.valueOf(result));
         return validationResponse;
     }

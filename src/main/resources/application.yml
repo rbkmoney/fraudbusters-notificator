@@ -68,13 +68,6 @@ mail:
     starttls:
       enable: true
 ---
-clickhouse.db:
-  url: "jdbc:clickhouse://localhost:8123/default"
-  user: "user"
-  password: "password"
-  connection.timeout: 50000
-  compress: false
----
 swagger:
   paths: |
     /swagger-ui.html,
@@ -86,3 +79,8 @@ swagger:
 fixedDelay:
   in:
     milliseconds: "600000"
+---
+warehouse:
+  url: http://localhost:8022/change_it
+  networkTimeout: 10000
+

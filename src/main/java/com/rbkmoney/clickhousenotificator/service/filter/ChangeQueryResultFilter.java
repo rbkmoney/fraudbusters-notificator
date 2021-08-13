@@ -5,7 +5,6 @@ import com.rbkmoney.clickhousenotificator.domain.QueryResult;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ public class ChangeQueryResultFilter implements Predicate<ReportModel> {
         return true;
     }
 
-    @NotNull
     private List<String> parseGroupedKeys(Optional<QueryResult> oldReportResult, List<String> keys) {
         return oldReportResult
                 .map(queryResult -> queryResult.getResults().stream()
@@ -55,7 +53,6 @@ public class ChangeQueryResultFilter implements Predicate<ReportModel> {
                 .orElseGet(ArrayList::new);
     }
 
-    @NotNull
     private String concatConcreteValues(List<String> keys, Map<String, String> map) {
         return map.entrySet().stream()
                 .filter(entry -> keys.contains(entry.getKey()))

@@ -42,10 +42,10 @@ public class FieldValidator implements Validator {
     }
 
     private void validateField(List<ValidationError> validationErrors,
-                               String queryText,
+                               String field,
                                String log,
                                String errorMessage) {
-        if (!StringUtils.hasLength(queryText)) {
+        if (!StringUtils.hasLength(field)) {
             FieldValidator.log.warn(log);
             validationErrors.add(new ValidationError(errorMessage));
         }

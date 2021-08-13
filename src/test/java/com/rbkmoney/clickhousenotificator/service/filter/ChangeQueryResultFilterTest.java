@@ -1,28 +1,21 @@
 package com.rbkmoney.clickhousenotificator.service.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rbkmoney.clickhousenotificator.TestObjectsFactory;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
-import com.rbkmoney.clickhousenotificator.util.NotificationFactory;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ChangeQueryResultFilterTest {
 
-    ChangeQueryResultFilter changeQueryResultFilter;
-
-    @Before
-    public void init() {
-        changeQueryResultFilter = new ChangeQueryResultFilter(new QueryResultSerde(new ObjectMapper()));
-    }
+    ChangeQueryResultFilter changeQueryResultFilter =
+            new ChangeQueryResultFilter(new QueryResultSerde(new ObjectMapper()));
 
     @Test
-    public void test1() {
+    public void testFilter() {
         Report lastReport = new Report();
         Report currentReport = new Report();
 
@@ -34,13 +27,13 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(NotificationFactory.createNotification("",
+                .notification(TestObjectsFactory.createNotification("",
                         NotificationStatus.ACTIVE,
                         "",
                         "shopId,currency"))
                 .build());
 
-        assertFalse(test);
+        Assertions.assertFalse(test);
 
         lastReport.setResult("{\"results\":[{\"t\":\"2019-12-05\",\"metric\":\"166.66666666666666\"," +
                 "\"currency\":\"RUB\",\"shopId\":\"ad8b7bfd-0760-4781-a400-51903ee8e504\"}]}");
@@ -52,12 +45,12 @@ public class ChangeQueryResultFilterTest {
         test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(NotificationFactory.createNotification("",
+                .notification(TestObjectsFactory.createNotification("",
                         NotificationStatus.ACTIVE,
                         "",
                         "shopId,currency"))
                 .build());
 
-        assertTrue(test);
+        Assertions.assertTrue(test);
     }
 }

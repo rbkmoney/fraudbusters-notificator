@@ -22,7 +22,6 @@
         <exposed.ports>${server.port} ${management.port} ${server.rest.port}</exposed.ports>
         <dockerfile.base.service.tag>c0612d6052ac049496b72a23a04acb142035f249</dockerfile.base.service.tag>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
-        <clickhouse-jdbc.version>0.1.54</clickhouse-jdbc.version>
 
         <db.name>ch_notificator</db.name>
         <db.port>5432</db.port>
@@ -32,6 +31,8 @@
         <db.schema>ch_notificator</db.schema>
         <db.common.lib.version>0.0.2-SNAPSHOT</db.common.lib.version>
         <shedlock-provider-jdbc-template.version>4.24.0</shedlock-provider-jdbc-template.version>
+
+        <warehouse.proto.version>1.7-ac426a0</warehouse.proto.version>
     </properties>
 
     <dependencies>
@@ -65,6 +66,11 @@
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
             <artifactId>serializer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>fraudbusters-warehouse-proto</artifactId>
+            <version>${warehouse.proto.version}</version>
         </dependency>
 
         <!--spring-->
@@ -111,17 +117,6 @@
             <version>1.18.4</version>
         </dependency>
         <dependency>
-            <groupId>ru.yandex.clickhouse</groupId>
-            <artifactId>clickhouse-jdbc</artifactId>
-            <version>${clickhouse-jdbc.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
@@ -156,18 +151,26 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>clickhouse</artifactId>
-            <version>1.12.5</version>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.15.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.8.0</version>
+            <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

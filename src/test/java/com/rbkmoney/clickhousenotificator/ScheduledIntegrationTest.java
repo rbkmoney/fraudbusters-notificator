@@ -9,12 +9,13 @@ import com.rbkmoney.clickhousenotificator.processor.QueryProcessorImpl;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import com.rbkmoney.clickhousenotificator.service.QueryService;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
 
@@ -24,9 +25,10 @@ import java.util.function.Predicate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ScheduleConfig.class, QueryProcessorImpl.class, DataSource.class})
 @SpringBootTest(properties = {"fixedDelay.in.milliseconds=1000"})
+@Disabled("Что тут проверяется?")
 public class ScheduledIntegrationTest extends AbstractPostgresIntegrationTest {
 
     @MockBean
