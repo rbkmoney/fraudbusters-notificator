@@ -27,10 +27,10 @@ public class MailFactory {
     public String fromAddress;
 
     public Optional<Message> create(ReportModel reportModel) {
-        String alertchanel = reportModel.getNotification().getAlertchanel();
-        Channel channel = channelDao.getByName(alertchanel);
+        String alertChannel = reportModel.getNotification().getAlertchanel();
+        Channel channel = channelDao.getByName(alertChannel);
         if (channel == null) {
-            log.warn("Not found channel with name: {}", alertchanel);
+            log.warn("Not found channel with name: {}", alertChannel);
             return Optional.empty();
         }
         String subject = initSubject(reportModel, channel);
@@ -43,6 +43,14 @@ public class MailFactory {
                 .build());
     }
 
+    private String initSubject(ReportModel reportModel, Channel channel) {
+        String subject = reportModel.getNotification().getSubject();
+        if (!StringUtils.hasLength(subject)) {
+            subject = channel.getSubject();
+        }
+        return subject;
+    }
+
     private Attachment initAttachment(ReportModel reportModel, String subject) {
         return queryResultSerde.deserialize(reportModel.getCurrentReport().getResult())
                 .map(queryResult ->
@@ -51,14 +59,6 @@ public class MailFactory {
                                 .fileName(attachmentFactory.createNameOfAttachment(subject))
                                 .build())
                 .orElse(null);
-    }
-
-    private String initSubject(ReportModel reportModel, Channel channel) {
-        String subject = reportModel.getNotification().getSubject();
-        if (StringUtils.isEmpty(subject)) {
-            subject = channel.getSubject();
-        }
-        return subject;
     }
 
     private String[] initRecipient(Channel channel) {

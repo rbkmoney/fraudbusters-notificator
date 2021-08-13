@@ -9,10 +9,10 @@ import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDaoImpl;
 import com.rbkmoney.clickhousenotificator.domain.ValidationResponse;
 import com.rbkmoney.clickhousenotificator.exception.WarehouseQueryException;
 import com.rbkmoney.clickhousenotificator.parser.PeriodParser;
+import com.rbkmoney.clickhousenotificator.query.TestQuery;
 import com.rbkmoney.clickhousenotificator.service.QueryService;
 import com.rbkmoney.clickhousenotificator.service.validator.FieldValidator;
 import com.rbkmoney.clickhousenotificator.service.validator.QueryValidator;
-import com.rbkmoney.clickhousenotificator.util.TestChQuery;
 import org.apache.thrift.TException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +48,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void createOrUpdate() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
@@ -65,7 +65,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void delete() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationDao.insert(notification);
 
@@ -79,7 +79,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void setStatus() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationResource.createOrUpdate(notification);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
@@ -106,7 +106,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateWithQueryError() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", TestQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
 
@@ -135,7 +135,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateOk() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", TestQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");

@@ -6,6 +6,7 @@ import com.rbkmoney.clickhousenotificator.dao.pg.ReportNotificationDao;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.service.factory.MailFactory;
 import com.rbkmoney.clickhousenotificator.service.filter.ChangeQueryResultFilter;
+import com.rbkmoney.clickhousenotificator.service.iface.MailSenderService;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,28 +18,28 @@ import org.springframework.stereotype.Component;
 public class NotificationServiceImpl implements NotificationService {
 
     private final ReportNotificationDao reportNotificationDao;
-    private final MailSenderServiceImpl mailSenderServiceImpl;
+    private final MailSenderService mailSenderService;
     private final MailFactory mailFactory;
     private final ChangeQueryResultFilter changeQueryResultFilter;
 
     @Override
-    public void sentNotification(ReportModel reportModel) {
+    public void send(ReportModel reportModel) {
         log.info("NotificationProcessorImpl start sentNotification!");
         Report report = reportModel.getCurrentReport();
         if (!changeQueryResultFilter.test(reportModel)) {
             report.setStatus(ReportStatus.skipped);
-            log.info("NotificationProcessorImpl skipped: {}", report);
+            log.info("NotificationServiceImpl skipped: {}", report);
             return;
         }
-        sendNotification(reportModel, report);
+        sendMail(reportModel, report);
         reportNotificationDao.insert(report);
-        log.info("NotificationProcessorImpl send: {}", report);
+        log.info("NotificationServiceImpl send: {}", report);
     }
 
-    private void sendNotification(ReportModel reportModel, Report report) {
+    private void sendMail(ReportModel reportModel, Report report) {
         mailFactory.create(reportModel).ifPresentOrElse(message -> {
             try {
-                mailSenderServiceImpl.send(message);
+                mailSenderService.send(message);
                 report.setStatus(ReportStatus.send);
             } catch (Exception e) {
                 log.error("Error when send message report: {} e: ", report, e);

@@ -5,7 +5,7 @@ import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDaoImpl;
-import com.rbkmoney.clickhousenotificator.util.TestChQuery;
+import com.rbkmoney.clickhousenotificator.query.TestQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class NotificationDaoTest extends AbstractPostgresIntegrationTest {
     @Test
     public void findOne() {
         //create
-        Notification notification = TestObjectsFactory.testNotification(TestChQuery.QUERY_METRIC_RECURRENT,
+        Notification notification = TestObjectsFactory.testNotification(TestQuery.QUERY_METRIC_RECURRENT,
                 NotificationStatus.CREATED, "test", "shopId,currency");
         String insert = notificationDao.insert(notification);
 

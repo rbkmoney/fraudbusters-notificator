@@ -9,7 +9,6 @@ import com.rbkmoney.clickhousenotificator.processor.QueryProcessorImpl;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
 import com.rbkmoney.clickhousenotificator.service.QueryService;
 import com.rbkmoney.clickhousenotificator.service.iface.NotificationService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ScheduleConfig.class, QueryProcessorImpl.class, DataSource.class})
 @SpringBootTest(properties = {"fixedDelay.in.milliseconds=1000"})
-@Disabled("Что тут проверяется?")
 public class ScheduledIntegrationTest extends AbstractPostgresIntegrationTest {
 
     @MockBean

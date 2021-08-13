@@ -48,7 +48,7 @@ public class QueryProcessorImpl implements QueryProcessor {
                     .filter(readyForNotifyFilter)
                     .map(this::queryForNotify)
                     .filter(Optional::isPresent)
-                    .forEach(reportModel -> notificationService.sentNotification(reportModel.get()));
+                    .forEach(reportModel -> notificationService.send(reportModel.get()));
         }
         log.info("QueryProcessorImpl finished process!");
     }

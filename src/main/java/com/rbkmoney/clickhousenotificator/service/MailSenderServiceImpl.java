@@ -16,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -34,7 +35,7 @@ public class MailSenderServiceImpl implements MailSenderService {
         } catch (MessagingException | MailException | IOException ex) {
             throw new MailSendException(
                     String.format("Received exception while sending message to mail, partyId=%s, claimId=%s, email=%s",
-                            message.getPartyId(), message.getClaimId(), message.getTo()), ex);
+                            message.getPartyId(), message.getClaimId(), Arrays.toString(message.getTo())), ex);
         }
     }
 

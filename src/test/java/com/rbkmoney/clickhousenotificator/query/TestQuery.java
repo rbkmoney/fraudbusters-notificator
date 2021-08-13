@@ -1,6 +1,6 @@
-package com.rbkmoney.clickhousenotificator.util;
+package com.rbkmoney.clickhousenotificator.query;
 
-public class TestChQuery {
+public class TestQuery {
 
     public static final String QUERY_METRIC_RECURRENT = " SELECT" +
             "        t," +
