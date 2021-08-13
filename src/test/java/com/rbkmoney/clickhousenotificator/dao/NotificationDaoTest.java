@@ -23,7 +23,7 @@ public class NotificationDaoTest extends AbstractPostgresIntegrationTest {
     @Test
     public void findOne() {
         //create
-        Notification notification = TestObjectsFactory.createNotification(TestChQuery.QUERY_METRIC_RECURRENT,
+        Notification notification = TestObjectsFactory.testNotification(TestChQuery.QUERY_METRIC_RECURRENT,
                 NotificationStatus.CREATED, "test", "shopId,currency");
         String insert = notificationDao.insert(notification);
 

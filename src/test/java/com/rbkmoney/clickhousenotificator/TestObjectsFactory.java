@@ -30,11 +30,11 @@ public abstract class TestObjectsFactory {
         return UUID.randomUUID().toString();
     }
 
-    public static Notification createNotification(String name,
-                                                  String select,
-                                                  NotificationStatus status,
-                                                  String channel,
-                                                  String groupParams) {
+    public static Notification testNotification(String name,
+                                                String select,
+                                                NotificationStatus status,
+                                                String channel,
+                                                String groupParams) {
         Notification notification = new Notification();
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
@@ -52,14 +52,14 @@ public abstract class TestObjectsFactory {
         return notification;
     }
 
-    public static Notification createNotification(String select,
-                                                  NotificationStatus status,
-                                                  String channel,
-                                                  String groupParams) {
-        return createNotification("test", select, status, channel, groupParams);
+    public static Notification testNotification(String select,
+                                                NotificationStatus status,
+                                                String channel,
+                                                String groupParams) {
+        return testNotification("test", select, status, channel, groupParams);
     }
 
-    public static Channel createChannel() {
+    public static Channel testChannel() {
         Channel channel = new Channel();
         channel.setName(CHANNEL);
         channel.setDestination(" test@mail.ru, two@test.ru");

@@ -49,14 +49,14 @@ class QueryProcessorImplTest {
 
     @BeforeEach
     public void init() {
-        channelDao.insert(TestObjectsFactory.createChannel());
+        channelDao.insert(TestObjectsFactory.testChannel());
         Notification successNotify =
-                TestObjectsFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationResource.createOrUpdate(successNotify);
         notificationResource
                 .createOrUpdate(
-                        TestObjectsFactory.createNotification("failedName", "select * from analytic.events_sink_refund",
+                        TestObjectsFactory.testNotification("failedName", "select * from analytic.events_sink_refund",
                                 NotificationStatus.ACTIVE, "errorChannel", "test"));
 
     }

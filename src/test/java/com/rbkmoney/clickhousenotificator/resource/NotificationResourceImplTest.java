@@ -48,7 +48,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void createOrUpdate() {
         Notification notification =
-                TestObjectsFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
@@ -65,7 +65,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void delete() {
         Notification notification =
-                TestObjectsFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationDao.insert(notification);
 
@@ -79,7 +79,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void setStatus() {
         Notification notification =
-                TestObjectsFactory.createNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationResource.createOrUpdate(notification);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
@@ -93,7 +93,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
 
     @Test
     void validateWithFieldError() {
-        Notification notification = TestObjectsFactory.createNotification(null, "",
+        Notification notification = TestObjectsFactory.testNotification(null, "",
                 NotificationStatus.ACTIVE, null, null);
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
@@ -106,7 +106,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateWithQueryError() {
         Notification notification =
-                TestObjectsFactory.createNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
 
@@ -121,7 +121,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
 
     @Test
     void validateWithAllErrors() {
-        Notification notification = TestObjectsFactory.createNotification(null, "",
+        Notification notification = TestObjectsFactory.testNotification(null, "",
                 NotificationStatus.ACTIVE, null, null);
         when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
 
@@ -135,7 +135,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateOk() {
         Notification notification =
-                TestObjectsFactory.createNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", TestChQuery.QUERY_METRIC_RECURRENT,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");

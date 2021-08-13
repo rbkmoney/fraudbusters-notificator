@@ -27,7 +27,7 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.createNotification("",
+                .notification(TestObjectsFactory.testNotification("",
                         NotificationStatus.ACTIVE,
                         "",
                         "shopId,currency"))
@@ -45,7 +45,7 @@ public class ChangeQueryResultFilterTest {
         test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.createNotification("",
+                .notification(TestObjectsFactory.testNotification("",
                         NotificationStatus.ACTIVE,
                         "",
                         "shopId,currency"))
