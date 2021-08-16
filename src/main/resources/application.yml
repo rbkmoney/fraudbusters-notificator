@@ -83,4 +83,8 @@ fixedDelay:
 warehouse:
   url: http://localhost:8022/change_it
   networkTimeout: 10000
+---
+testcontainers:
+  postgresql:
+    tag: '11.4'
 

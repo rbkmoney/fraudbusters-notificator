@@ -1,25 +1,17 @@
 package com.rbkmoney.clickhousenotificator.resource;
 
 import com.rbkmoney.clickhousenotificator.TestObjectsFactory;
-import com.rbkmoney.clickhousenotificator.dao.AbstractPostgresIntegrationTest;
+import com.rbkmoney.clickhousenotificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
-import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDaoImpl;
 import com.rbkmoney.clickhousenotificator.domain.ValidationResponse;
 import com.rbkmoney.clickhousenotificator.exception.WarehouseQueryException;
-import com.rbkmoney.clickhousenotificator.parser.PeriodParser;
-import com.rbkmoney.clickhousenotificator.query.TestQuery;
 import com.rbkmoney.clickhousenotificator.service.QueryService;
-import com.rbkmoney.clickhousenotificator.service.validator.FieldValidator;
-import com.rbkmoney.clickhousenotificator.service.validator.QueryValidator;
 import org.apache.thrift.TException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
@@ -31,10 +23,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {NotificationResourceImpl.class, FieldValidator.class, QueryValidator.class,
-        PeriodParser.class, NotificationDaoImpl.class})
-class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
+@PostgresqlSpringBootITest
+class NotificationResourceImplTest {
 
     @Autowired
     private NotificationResource notificationResource;
@@ -45,10 +35,12 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @MockBean
     private QueryService queryService;
 
+    private static final String QUERY = "select * from db";
+
     @Test
     void createOrUpdate() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", QUERY,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
@@ -65,7 +57,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void delete() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", QUERY,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationDao.insert(notification);
 
@@ -79,7 +71,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void setStatus() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", TestQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("successNotify", QUERY,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         notificationResource.createOrUpdate(notification);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
@@ -106,7 +98,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateWithQueryError() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", TestQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", QUERY,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
 
@@ -135,7 +127,7 @@ class NotificationResourceImplTest extends AbstractPostgresIntegrationTest {
     @Test
     void validateOk() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", TestQuery.QUERY_METRIC_RECURRENT,
+                TestObjectsFactory.testNotification("validationResponse", QUERY,
                         NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");

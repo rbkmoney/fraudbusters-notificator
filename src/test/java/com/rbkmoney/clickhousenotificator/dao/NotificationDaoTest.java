@@ -1,29 +1,27 @@
 package com.rbkmoney.clickhousenotificator.dao;
 
 import com.rbkmoney.clickhousenotificator.TestObjectsFactory;
+import com.rbkmoney.clickhousenotificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDao;
-import com.rbkmoney.clickhousenotificator.dao.pg.NotificationDaoImpl;
-import com.rbkmoney.clickhousenotificator.query.TestQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ContextConfiguration(classes = {NotificationDaoImpl.class})
-public class NotificationDaoTest extends AbstractPostgresIntegrationTest {
+@PostgresqlSpringBootITest
+public class NotificationDaoTest {
 
     @Autowired
     NotificationDao notificationDao;
 
     @Test
-    public void findOne() {
+    void findOne() {
         //create
-        Notification notification = TestObjectsFactory.testNotification(TestQuery.QUERY_METRIC_RECURRENT,
+        Notification notification = TestObjectsFactory.testNotification("select * from db",
                 NotificationStatus.CREATED, "test", "shopId,currency");
         String insert = notificationDao.insert(notification);
 

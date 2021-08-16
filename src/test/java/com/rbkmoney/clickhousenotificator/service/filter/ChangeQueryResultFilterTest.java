@@ -6,8 +6,10 @@ import com.rbkmoney.clickhousenotificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.clickhousenotificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.clickhousenotificator.domain.ReportModel;
 import com.rbkmoney.clickhousenotificator.serializer.QueryResultSerde;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ChangeQueryResultFilterTest {
 
@@ -15,7 +17,7 @@ public class ChangeQueryResultFilterTest {
             new ChangeQueryResultFilter(new QueryResultSerde(new ObjectMapper()));
 
     @Test
-    public void testFilter() {
+    void testFilter() {
         Report lastReport = new Report();
         Report currentReport = new Report();
 
@@ -33,7 +35,7 @@ public class ChangeQueryResultFilterTest {
                         "shopId,currency"))
                 .build());
 
-        Assertions.assertFalse(test);
+        assertFalse(test);
 
         lastReport.setResult("{\"results\":[{\"t\":\"2019-12-05\",\"metric\":\"166.66666666666666\"," +
                 "\"currency\":\"RUB\",\"shopId\":\"ad8b7bfd-0760-4781-a400-51903ee8e504\"}]}");
@@ -51,6 +53,6 @@ public class ChangeQueryResultFilterTest {
                         "shopId,currency"))
                 .build());
 
-        Assertions.assertTrue(test);
+        assertTrue(test);
     }
 }

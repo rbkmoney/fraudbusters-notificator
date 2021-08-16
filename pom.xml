@@ -31,8 +31,8 @@
         <db.schema>ch_notificator</db.schema>
         <db.common.lib.version>0.0.2-SNAPSHOT</db.common.lib.version>
         <shedlock-provider-jdbc-template.version>4.24.0</shedlock-provider-jdbc-template.version>
-
         <warehouse.proto.version>1.7-ac426a0</warehouse.proto.version>
+        <testcontainers.annotations.version>1.3.0</testcontainers.annotations.version>
     </properties>
 
     <dependencies>
@@ -170,7 +170,12 @@
             <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>testcontainers-annotations</artifactId>
+            <version>${testcontainers.annotations.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
