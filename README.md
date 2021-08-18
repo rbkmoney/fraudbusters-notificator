@@ -1,4 +1,4 @@
-# clickhouse-notificator
+# fraudbusters-notificator
 
 ```
  {
