@@ -1,5 +1,5 @@
 #!groovy
-build('clickhouse-notificator', 'java-maven') {
+build('fraudbusters-notificator', 'java-maven') {
     checkoutRepo()
     loadBuildUtils()
 
