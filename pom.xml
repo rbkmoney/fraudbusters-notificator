@@ -9,11 +9,11 @@
         <version>1.2.5</version>
     </parent>
 
-    <artifactId>clickhouse-notificator</artifactId>
+    <artifactId>fraudbusters-notificator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>clickhouse_notificator</name>
+    <name>fraudbusters-notificator</name>
 
     <properties>
         <server.port>8022</server.port>
@@ -254,7 +254,7 @@
                             <inputSchema>${db.schema}</inputSchema>
                         </database>
                         <target>
-                            <packageName>com.rbkmoney.clickhousenotificator.dao.domain</packageName>
+                            <packageName>com.rbkmoney.fraudbusters.notificator.dao.domain</packageName>
                             <directory>target/generated-sources/jooq</directory>
                         </target>
                     </generator>
