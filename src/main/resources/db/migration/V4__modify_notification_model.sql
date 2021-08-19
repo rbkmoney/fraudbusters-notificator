@@ -1,8 +1,10 @@
+ALTER TABLE ch_notificator.notification
+    DROP CONSTRAINT notification_pkey;
 DROP TABLE IF EXISTS ch_notificator.notification;
 
 CREATE TABLE ch_notificator.notification_template
 (
-    id           CHARACTER VARYING           NOT NULL,
+    id           SERIAL                      NOT NULL,
     name         CHARACTER VARYING           NOT NULL,
     type         CHARACTER VARYING           NOT NULL,
     skeleton     TEXT                        NOT NULL,
@@ -11,7 +13,7 @@ CREATE TABLE ch_notificator.notification_template
     created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 
-    CONSTRAINT notification_pkey PRIMARY KEY (id)
+    CONSTRAINT notification_template_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE ch_notificator.notification
@@ -24,9 +26,10 @@ CREATE TABLE ch_notificator.notification
     frequency   CHARACTER VARYING                  NOT NULL,
     channel     CHARACTER VARYING                  NOT NULL,
     status      ch_notificator.notification_status NOT NULL,
-    template_id CHARACTER VARYING                  NOT NULL,
+    template_id SERIAL                             NOT NULL,
 
-    CONSTRAINT fk_customer FOREIGN KEY (template_id) REFERENCES notification_template (id)
+    CONSTRAINT notification_pkey PRIMARY KEY (name),
+    CONSTRAINT fk_notification_template FOREIGN KEY (template_id) REFERENCES notification_template (id)
 );
 
 
