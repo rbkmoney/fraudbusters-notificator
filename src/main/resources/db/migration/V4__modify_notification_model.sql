@@ -29,7 +29,7 @@ CREATE TABLE ch_notificator.notification
     template_id SERIAL                             NOT NULL,
 
     CONSTRAINT notification_pkey PRIMARY KEY (name),
-    CONSTRAINT fk_notification_template FOREIGN KEY (template_id) REFERENCES notification_template (id)
+    CONSTRAINT notification_notification_tmpl_fkey FOREIGN KEY (template_id) REFERENCES notification_template (id)
 );
 
 
