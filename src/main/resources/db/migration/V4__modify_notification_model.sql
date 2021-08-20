@@ -17,6 +17,7 @@ CREATE TABLE ch_notificator.notification_template
 
 CREATE TABLE ch_notificator.notification
 (
+    id          BIGSERIAL                          NOT NULL,
     name        CHARACTER VARYING                  NOT NULL,
     subject     CHARACTER VARYING                  NOT NULL,
     created_at  TIMESTAMP WITHOUT TIME ZONE        NOT NULL DEFAULT now(),
@@ -25,9 +26,9 @@ CREATE TABLE ch_notificator.notification
     frequency   CHARACTER VARYING                  NOT NULL,
     channel     CHARACTER VARYING                  NOT NULL,
     status      ch_notificator.notification_status NOT NULL,
-    template_id SERIAL                             NOT NULL,
+    template_id INT                                NOT NULL,
 
-    CONSTRAINT notification_pkey PRIMARY KEY (name),
+    CONSTRAINT notification_pkey PRIMARY KEY (id),
     CONSTRAINT notification_notification_tmpl_fkey FOREIGN KEY (template_id) REFERENCES notification_template (id)
 );
 
