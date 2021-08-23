@@ -1,8 +1,10 @@
 package com.rbkmoney.fraudbusters.notificator.resource;
 
 import com.rbkmoney.fraudbusters.notificator.dao.NotificationDao;
+import com.rbkmoney.fraudbusters.notificator.dao.NotificationTemplateDao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.notificator.domain.ValidationError;
 import com.rbkmoney.fraudbusters.notificator.domain.ValidationResponse;
 import com.rbkmoney.fraudbusters.notificator.exception.ValidationNotificationException;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class NotificationResourceImpl implements NotificationResource {
 
     private final NotificationDao notificationDao;
+    private final NotificationTemplateDao notificationTemplateDao;
     private final QueryService queryService;
     private final List<Validator> validators;
 
@@ -60,6 +63,7 @@ public class NotificationResourceImpl implements NotificationResource {
         log.info("NotificationResourceImpl changed status notification: {}", notification);
     }
 
+    // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt
     @Override
     @PostMapping(value = "/notification/validate")
     public ValidationResponse validate(@Validated @RequestBody Notification notification) {
@@ -74,8 +78,9 @@ public class NotificationResourceImpl implements NotificationResource {
             validationResponse.setErrors(errors);
             return validationResponse;
         }
-
-        List<Map<String, String>> result = queryService.query(notification.getQueryText());
+        // TODO нужен ли в ответе валидации результат?
+        NotificationTemplate notificationTemplate = notificationTemplateDao.getById(notification.getTemplateId());
+        List<Map<String, String>> result = queryService.query(notificationTemplate.getQueryText());
         validationResponse.setResult(String.valueOf(result));
         return validationResponse;
     }

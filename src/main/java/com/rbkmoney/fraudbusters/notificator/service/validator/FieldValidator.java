@@ -30,12 +30,8 @@ public class FieldValidator implements Validator {
             validationErrors.add(new ValidationError("Unknown period value: " + notification.getPeriod()));
         }
 
-        validateField(validationErrors, notification.getGroupbyparams(), "Empty group params!", "Empty group params," +
-                " we sent many notify message to you," +
-                " because we can't find old data without this field!");
-        validateField(validationErrors, notification.getQueryText(), "Empty query text!", "Query text is required!");
         validateField(validationErrors, notification.getName(), "Empty name!", "Name is required!");
-        validateField(validationErrors, notification.getAlertchanel(), "Empty channel!", "Alertchanel is required!");
+        validateField(validationErrors, notification.getChannel(), "Empty channel!", "Channel is required!");
         validateField(validationErrors, notification.getFrequency(), "Empty frequency!", "frequency  is required!");
 
         return validationErrors;

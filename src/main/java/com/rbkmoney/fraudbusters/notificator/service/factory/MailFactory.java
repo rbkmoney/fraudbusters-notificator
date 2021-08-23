@@ -27,15 +27,16 @@ public class MailFactory {
     public String fromAddress;
 
     public Optional<Message> create(ReportModel reportModel) {
-        String alertChannel = reportModel.getNotification().getAlertchanel();
+        String alertChannel = reportModel.getNotification().getChannel();
         Channel channel = channelDao.getByName(alertChannel);
         if (channel == null) {
             log.warn("Not found channel with name: {}", alertChannel);
             return Optional.empty();
         }
         String subject = initSubject(reportModel, channel);
+        String content = reportModel.getNotificationTemplate().getSkeleton();
         return Optional.of(Message.builder()
-                .content(reportModel.getNotification().getTemplateValue())
+                .content(content)
                 .to(initRecipient(channel))
                 .subject(subject)
                 .from(fromAddress)

@@ -29,8 +29,13 @@ CREATE TABLE ch_notificator.notification
     template_id INT                                NOT NULL,
 
     CONSTRAINT notification_pkey PRIMARY KEY (id),
-    CONSTRAINT notification_notification_tmpl_fkey FOREIGN KEY (template_id) REFERENCES notification_template (id)
+    CONSTRAINT notification_notification_tmpl_fkey FOREIGN KEY (template_id) REFERENCES ch_notificator.notification_template (id)
 );
+
+ALTER TABLE ch_notificator.report
+    RENAME notification_name TO notification_id;
+ALTER TABLE ch_notificator.report
+    ALTER COLUMN notification_id TYPE BIGINT USING notification_id::bigint;
 
 
 INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)

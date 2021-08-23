@@ -5,6 +5,7 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.warehouse.Row;
 
 import java.time.LocalDateTime;
@@ -31,32 +32,38 @@ public abstract class TestObjectsFactory {
     }
 
     public static Notification testNotification(String name,
-                                                String select,
                                                 NotificationStatus status,
-                                                String channel,
-                                                String groupParams) {
+                                                String channel) {
         Notification notification = new Notification();
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
         notification.setName(name);
         notification.setCreatedAt(now);
         notification.setUpdatedAt(now);
-        notification.setGroupbyparams(groupParams);
-        notification.setAlertchanel(channel);
+        notification.setChannel(channel);
         notification.setPeriod("1d");
-        notification.setQueryText(select);
         notification.setStatus(status);
-        notification.setTemplateType(TemplateType.MAIL_FORM.name());
-        notification.setTemplateValue("<>");
         notification.setSubject("Тестирование сообщений");
         return notification;
     }
 
-    public static Notification testNotification(String select,
-                                                NotificationStatus status,
-                                                String channel,
-                                                String groupParams) {
-        return testNotification("test", select, status, channel, groupParams);
+    public static Notification testNotification(NotificationStatus status,
+                                                String channel) {
+        return testNotification("test", status, channel);
+    }
+
+    public static NotificationTemplate testNotificationTemplate(String select,
+                                                                String groupParams) {
+        NotificationTemplate notificationTemplate = new NotificationTemplate();
+        LocalDateTime now = LocalDateTime.now();
+        notificationTemplate.setName(randomString());
+        notificationTemplate.setCreatedAt(now);
+        notificationTemplate.setUpdatedAt(now);
+        notificationTemplate.setBasicParams(groupParams);
+        notificationTemplate.setQueryText(select);
+        notificationTemplate.setType(TemplateType.MAIL_FORM.name());
+        notificationTemplate.setSkeleton("<>");
+        return notificationTemplate;
     }
 
     public static Channel testChannel() {

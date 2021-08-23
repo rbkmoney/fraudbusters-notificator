@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @PostgresqlSpringBootITest
+//@ContextConfiguration(classes = {NotificationDaoImpl.class})
 public class NotificationDaoTest {
 
     @Autowired
@@ -20,8 +21,8 @@ public class NotificationDaoTest {
     @Test
     void findOne() {
         //create
-        Notification notification = TestObjectsFactory.testNotification("select * from db",
-                NotificationStatus.CREATED, "test", "shopId,currency");
+        Notification notification = TestObjectsFactory.testNotification(
+                NotificationStatus.CREATED, "test");
         String insert = notificationDao.insert(notification);
 
         //get by id

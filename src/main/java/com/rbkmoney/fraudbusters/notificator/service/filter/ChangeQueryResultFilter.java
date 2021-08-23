@@ -31,8 +31,7 @@ public class ChangeQueryResultFilter implements Predicate<ReportModel> {
                 if (oldReportResult.isEmpty()) {
                     return true;
                 }
-
-                String groupParams = reportModel.getNotification().getGroupbyparams();
+                String groupParams = reportModel.getNotificationTemplate().getBasicParams();
                 List<String> keys = List.of(groupParams.split(","));
 
                 List<String> groupedKeys = parseGroupedKeys(oldReportResult, keys);

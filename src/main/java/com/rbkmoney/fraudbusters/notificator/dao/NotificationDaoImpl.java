@@ -32,7 +32,7 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
         Query query = getDslContext()
                 .insertInto(NOTIFICATION)
                 .set(getDslContext().newRecord(NOTIFICATION, notification))
-                .onConflict(NOTIFICATION.NAME)
+                .onConflict(NOTIFICATION.ID)
                 .doUpdate()
                 .set(getDslContext().newRecord(NOTIFICATION, notification));
         execute(query);

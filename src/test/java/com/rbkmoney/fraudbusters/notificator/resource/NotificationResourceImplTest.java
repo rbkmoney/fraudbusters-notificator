@@ -22,6 +22,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @PostgresqlSpringBootITest
@@ -41,12 +42,12 @@ class NotificationResourceImplTest {
     @Test
     void createOrUpdate() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", QUERY,
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
+                TestObjectsFactory.testNotification("successNotify",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
         List<Map<String, String>> result = List.of(values);
-        when(queryService.query(notification.getQueryText())).thenReturn(result);
+        when(queryService.query(QUERY)).thenReturn(result);
 
         Assertions.assertDoesNotThrow(() -> notificationResource.createOrUpdate(notification));
 
@@ -58,8 +59,8 @@ class NotificationResourceImplTest {
     @Test
     void delete() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", QUERY,
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
+                TestObjectsFactory.testNotification("successNotify",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
         notificationDao.insert(notification);
 
         Assertions.assertDoesNotThrow(() -> notificationResource.delete(notification.getName()));
@@ -72,8 +73,8 @@ class NotificationResourceImplTest {
     @Test
     void setStatus() {
         Notification notification =
-                TestObjectsFactory.testNotification("successNotify", QUERY,
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
+                TestObjectsFactory.testNotification("successNotify",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
         notificationResource.createOrUpdate(notification);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
 
@@ -86,8 +87,8 @@ class NotificationResourceImplTest {
 
     @Test
     void validateWithFieldError() {
-        Notification notification = TestObjectsFactory.testNotification(null, "",
-                NotificationStatus.ACTIVE, null, null);
+        Notification notification = TestObjectsFactory.testNotification(null,
+                NotificationStatus.ACTIVE, null);
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
 
@@ -99,9 +100,9 @@ class NotificationResourceImplTest {
     @Test
     void validateWithQueryError() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", QUERY,
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
-        when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
+                TestObjectsFactory.testNotification("validationResponse",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
+        when(queryService.query(QUERY)).thenThrow(new WarehouseQueryException(new TException()));
 
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
@@ -114,9 +115,9 @@ class NotificationResourceImplTest {
 
     @Test
     void validateWithAllErrors() {
-        Notification notification = TestObjectsFactory.testNotification(null, "",
-                NotificationStatus.ACTIVE, null, null);
-        when(queryService.query(notification.getQueryText())).thenThrow(new WarehouseQueryException(new TException()));
+        Notification notification = TestObjectsFactory.testNotification(null,
+                NotificationStatus.ACTIVE, null);
+        when(queryService.query(anyString())).thenThrow(new WarehouseQueryException(new TException()));
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
 
@@ -128,12 +129,12 @@ class NotificationResourceImplTest {
     @Test
     void validateOk() {
         Notification notification =
-                TestObjectsFactory.testNotification("validationResponse", QUERY,
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
+                TestObjectsFactory.testNotification("validationResponse",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
         List<Map<String, String>> result = List.of(values);
-        when(queryService.query(notification.getQueryText())).thenReturn(result);
+        when(queryService.query(QUERY)).thenReturn(result);
 
 
         ValidationResponse validationResponse = notificationResource.validate(notification);

@@ -48,12 +48,12 @@ public class QueryProcessorImplTest {
     void process() throws Exception {
         channelDao.insert(TestObjectsFactory.testChannel());
         Notification successNotification =
-                TestObjectsFactory.testNotification("successNotify", "select * from db",
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL, "shopId,currency");
+                TestObjectsFactory.testNotification("successNotify",
+                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
         notificationDao.insert(successNotification);
         Notification errorNotification =
-                TestObjectsFactory.testNotification("failedName", "select * from analytic.events_sink_refund",
-                        NotificationStatus.ACTIVE, "errorChannel", "test");
+                TestObjectsFactory.testNotification("failedName",
+                        NotificationStatus.ACTIVE, "errorChannel");
         notificationDao.insert(errorNotification);
         when(queryService.query(anyString()))
                 .thenReturn(List.of(Map.of("shopId", "ad8b7bfd-0760-4781-a400-51903ee8e504")));

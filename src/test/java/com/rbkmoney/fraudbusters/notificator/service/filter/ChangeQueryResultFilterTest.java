@@ -17,7 +17,7 @@ public class ChangeQueryResultFilterTest {
             new ChangeQueryResultFilter(new QueryResultSerde(new ObjectMapper()));
 
     @Test
-    void testFilter() {
+    void testFilterFalse() {
         Report lastReport = new Report();
         Report currentReport = new Report();
 
@@ -29,13 +29,17 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification("",
-                        NotificationStatus.ACTIVE,
-                        "",
-                        "shopId,currency"))
+                .notification(TestObjectsFactory.testNotification(NotificationStatus.ACTIVE, ""))
+                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("select", "shopId,currency"))
                 .build());
 
         assertFalse(test);
+    }
+
+    @Test
+    void testFilterTrue() {
+        Report lastReport = new Report();
+        Report currentReport = new Report();
 
         lastReport.setResult("{\"results\":[{\"t\":\"2019-12-05\",\"metric\":\"166.66666666666666\"," +
                 "\"currency\":\"RUB\",\"shopId\":\"ad8b7bfd-0760-4781-a400-51903ee8e504\"}]}");
@@ -44,13 +48,11 @@ public class ChangeQueryResultFilterTest {
                 "{\"t\":\"2019-12-05\",\"metric\":\"100\",\"currency\":\"USD\"," +
                 "\"shopId\":\"ad8b7bfd-0760-4781-a400-51903ee8e504\"}]}");
 
-        test = changeQueryResultFilter.test(ReportModel.builder()
+        boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification("",
-                        NotificationStatus.ACTIVE,
-                        "",
-                        "shopId,currency"))
+                .notification(TestObjectsFactory.testNotification(NotificationStatus.ACTIVE, ""))
+                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("select", "shopId,currency"))
                 .build());
 
         assertTrue(test);
