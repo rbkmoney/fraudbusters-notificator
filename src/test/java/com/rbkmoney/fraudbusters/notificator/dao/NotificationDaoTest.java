@@ -2,7 +2,6 @@ package com.rbkmoney.fraudbusters.notificator.dao;
 
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
 import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
-import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
@@ -41,8 +40,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification(TestObjectsFactory.randomString(),
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
 
         Notification savedNotification = notificationDao.insert(notification);
@@ -59,8 +57,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)
@@ -81,14 +78,13 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)
                 .execute();
 
-        List<Notification> notifications = notificationDao.getByStatus(NotificationStatus.CREATED);
+        List<Notification> notifications = notificationDao.getByStatus(notification.getStatus());
 
         assertEquals(1, notifications.size());
         assertEquals(notification.getName(), notifications.get(0).getName());
@@ -100,8 +96,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)
@@ -125,8 +120,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)

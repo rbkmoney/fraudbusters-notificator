@@ -17,8 +17,6 @@ import java.util.UUID;
 
 public abstract class TestObjectsFactory {
 
-    public static final String CHANNEL = "channel";
-
     public static Row testRow() {
         Map<String, String> rowValues = new HashMap<>();
         rowValues.put(randomString(), randomString());
@@ -33,19 +31,17 @@ public abstract class TestObjectsFactory {
         return UUID.randomUUID().toString();
     }
 
-    public static Notification testNotification(String name,
-                                                NotificationStatus status,
-                                                String channel) {
+    public static Notification testNotification() {
         Notification notification = new Notification();
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
-        notification.setName(name);
+        notification.setName(randomString());
         notification.setCreatedAt(now);
         notification.setUpdatedAt(now);
-        notification.setChannel(channel);
+        notification.setChannel(randomString());
         notification.setPeriod("1d");
-        notification.setStatus(status);
-        notification.setSubject("Тестирование сообщений");
+        notification.setStatus(NotificationStatus.ACTIVE);
+        notification.setSubject(randomString());
         return notification;
     }
 
@@ -64,18 +60,17 @@ public abstract class TestObjectsFactory {
         return notification;
     }
 
-    public static NotificationRecord testNotificationRecord(NotificationStatus status,
-                                                            String channel) {
+    public static NotificationRecord testNotificationRecord() {
         NotificationRecord notification = new NotificationRecord();
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
         notification.setName(randomString());
         notification.setCreatedAt(now);
         notification.setUpdatedAt(now);
-        notification.setChannel(channel);
+        notification.setChannel(randomString());
         notification.setPeriod("1d");
-        notification.setStatus(status);
-        notification.setSubject("Тестирование сообщений");
+        notification.setStatus(NotificationStatus.ACTIVE);
+        notification.setSubject(randomString());
         return notification;
     }
 
@@ -88,7 +83,7 @@ public abstract class TestObjectsFactory {
         notificationTemplate.setBasicParams(groupParams);
         notificationTemplate.setQueryText(randomString());
         notificationTemplate.setType(TemplateType.MAIL_FORM.name());
-        notificationTemplate.setSkeleton("<>");
+        notificationTemplate.setSkeleton(randomString());
         return notificationTemplate;
     }
 
@@ -101,13 +96,13 @@ public abstract class TestObjectsFactory {
         notificationTemplateRecord.setBasicParams(randomString());
         notificationTemplateRecord.setQueryText(randomString());
         notificationTemplateRecord.setType(TemplateType.MAIL_FORM.name());
-        notificationTemplateRecord.setSkeleton("<>");
+        notificationTemplateRecord.setSkeleton(randomString());
         return notificationTemplateRecord;
     }
 
     public static ChannelRecord testChannelRecord() {
         ChannelRecord channelRecord = new ChannelRecord();
-        channelRecord.setName(CHANNEL);
+        channelRecord.setName(randomString());
         channelRecord.setDestination(" test@mail.ru, two@test.ru");
         channelRecord.setSubject(randomString());
         channelRecord.setCreatedAt(LocalDateTime.now());

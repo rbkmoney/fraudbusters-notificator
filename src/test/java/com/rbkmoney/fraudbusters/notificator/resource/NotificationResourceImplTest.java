@@ -53,9 +53,7 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification =
-                TestObjectsFactory.testNotification(TestObjectsFactory.randomString(),
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
@@ -79,8 +77,7 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, TestObjectsFactory.randomString());
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)
@@ -98,8 +95,7 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord notification = TestObjectsFactory.testNotificationRecord(
-                NotificationStatus.CREATED, "test");
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
         notification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification)
@@ -107,10 +103,13 @@ class NotificationResourceImplTest {
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
 
-        assertDoesNotThrow(() -> notificationResource.updateStatus(savedNotification.getId(), newStatus));
+
+        NotificationStatus actualStatus = notificationResource.updateStatus(savedNotification.getId(), newStatus);
+
 
         NotificationRecord updatedNotification = dslContext.fetchOne(NOTIFICATION);
         assertEquals(newStatus, updatedNotification.getStatus());
+        assertEquals(newStatus, actualStatus);
     }
 
     @Test
@@ -119,9 +118,10 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification(null,
-                NotificationStatus.ACTIVE, null);
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
+        notification.setName(null);
+        notification.setChannel(null);
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
 
@@ -135,9 +135,7 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification =
-                TestObjectsFactory.testNotification(TestObjectsFactory.randomString(),
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
         when(queryService.query(savedNotificationTemplate.getQueryText()))
                 .thenThrow(new WarehouseQueryException(new TException()));
@@ -155,9 +153,10 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification(null,
-                NotificationStatus.ACTIVE, null);
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
+        notification.setName(null);
+        notification.setChannel(null);
         when(queryService.query(anyString())).thenThrow(new WarehouseQueryException(new TException()));
 
         ValidationResponse validationResponse = notificationResource.validate(notification);
@@ -172,9 +171,7 @@ class NotificationResourceImplTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification =
-                TestObjectsFactory.testNotification(TestObjectsFactory.randomString(),
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
+        Notification notification = TestObjectsFactory.testNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");

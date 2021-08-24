@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
 import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.fraudbusters.notificator.dao.ReportNotificationDao;
-import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Report;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
 import com.rbkmoney.fraudbusters.notificator.domain.QueryResult;
@@ -45,23 +45,21 @@ public class QueryProcessorImplTest {
 
     @Test
     void process() throws Exception {
+        ChannelRecord channel = TestObjectsFactory.testChannelRecord();
         dslContext.insertInto(CHANNEL)
-                .set(TestObjectsFactory.testChannelRecord())
+                .set(channel)
                 .execute();
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        NotificationRecord successNotification =
-                TestObjectsFactory.testNotificationRecord(
-                        NotificationStatus.ACTIVE, TestObjectsFactory.CHANNEL);
+        NotificationRecord successNotification = TestObjectsFactory.testNotificationRecord();
+        successNotification.setChannel(channel.getName());
         successNotification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(successNotification)
                 .execute();
-        NotificationRecord errorNotification =
-                TestObjectsFactory.testNotificationRecord(
-                        NotificationStatus.ACTIVE, TestObjectsFactory.randomString());
+        NotificationRecord errorNotification = TestObjectsFactory.testNotificationRecord();
         errorNotification.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(errorNotification)

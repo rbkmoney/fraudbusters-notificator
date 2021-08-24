@@ -39,7 +39,7 @@ public class NotificationResourceImpl implements NotificationResource {
             throw new ValidationNotificationException("Exception when create errors: " + validate);
         }
         Notification savedNotification = notificationDao.insert(notification);
-        log.info("NotificationResourceImpl created notification: {}", savedNotification);
+        log.info("NotificationResourceImpl create notification: {}", savedNotification);
         return savedNotification;
     }
 
@@ -52,12 +52,13 @@ public class NotificationResourceImpl implements NotificationResource {
 
     @Override
     @GetMapping(value = "/notifications/{id}/statuses")
-    public void updateStatus(@Validated @PathVariable Long id,
-                             @Validated @RequestBody NotificationStatus status) {
+    public NotificationStatus updateStatus(@Validated @PathVariable Long id,
+                                           @Validated @RequestBody NotificationStatus status) {
         var notification = notificationDao.getById(id);
         notification.setStatus(status);
         notificationDao.insert(notification);
         log.info("NotificationResourceImpl change status notification: {}", notification);
+        return status;
     }
 
     // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt
