@@ -82,6 +82,7 @@ public class QueryProcessorImpl implements QueryProcessor {
                     notificationTemplate, queryResult);
             return Optional.of(ReportModel.builder()
                     .notification(notification)
+                    .notificationTemplate(notificationTemplate)
                     .lastReport(reportModel.getLastReport())
                     .currentReport(currentReport)
                     .build());

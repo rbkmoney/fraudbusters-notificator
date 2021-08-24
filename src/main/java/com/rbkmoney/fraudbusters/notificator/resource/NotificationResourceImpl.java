@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("ch-manager")
 public class NotificationResourceImpl implements NotificationResource {
 
     private final NotificationDao notificationDao;
@@ -33,39 +32,37 @@ public class NotificationResourceImpl implements NotificationResource {
     private final List<Validator> validators;
 
     @Override
-    @PostMapping(value = "/notification")
+    @PostMapping(value = "/notifications")
     public Notification createOrUpdate(@Validated @RequestBody Notification notification) {
         ValidationResponse validate = validate(notification);
         if (!CollectionUtils.isEmpty(validate.getErrors())) {
             throw new ValidationNotificationException("Exception when create errors: " + validate);
         }
-        notificationDao.insert(notification);
-        log.info("NotificationResourceImpl created notification: {}", notification);
-        return notification;
+        Notification savedNotification = notificationDao.insert(notification);
+        log.info("NotificationResourceImpl created notification: {}", savedNotification);
+        return savedNotification;
     }
 
     @Override
-    @DeleteMapping(value = "/notification/{name}")
-    public Notification delete(@Validated @PathVariable String name) {
-        var notification = notificationDao.getByName(name);
-        notificationDao.remove(name);
-        log.info("NotificationResourceImpl deleted notification: {}", notification);
-        return notification;
+    @DeleteMapping(value = "/notifications/{id}")
+    public void delete(@Validated @PathVariable Long id) {
+        notificationDao.remove(id);
+        log.info("NotificationResourceImpl delete notification with id: {}", id);
     }
 
     @Override
-    @GetMapping(value = "/notification/{name}/{status}")
-    public void setStatus(@Validated @PathVariable String name,
-                          @Validated @PathVariable NotificationStatus status) {
-        var notification = notificationDao.getByName(name);
+    @GetMapping(value = "/notifications/{id}/statuses")
+    public void updateStatus(@Validated @PathVariable Long id,
+                             @Validated @RequestBody NotificationStatus status) {
+        var notification = notificationDao.getById(id);
         notification.setStatus(status);
         notificationDao.insert(notification);
-        log.info("NotificationResourceImpl changed status notification: {}", notification);
+        log.info("NotificationResourceImpl change status notification: {}", notification);
     }
 
     // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt
     @Override
-    @PostMapping(value = "/notification/validate")
+    @PostMapping(value = "/notifications/validating")
     public ValidationResponse validate(@Validated @RequestBody Notification notification) {
         List<ValidationError> errors = validators.stream()
                 .map(validator -> validator.validate(notification))

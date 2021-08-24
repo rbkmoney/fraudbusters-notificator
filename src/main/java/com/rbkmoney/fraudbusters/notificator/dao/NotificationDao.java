@@ -8,15 +8,11 @@ import java.util.List;
 
 public interface NotificationDao {
 
-    String insert(Notification listRecord);
+    Notification insert(Notification notification);
 
-    void remove(String id);
+    void remove(Long id);
 
-    void remove(Notification listRecord);
-
-    Notification getByName(String name);
-
-    List<Notification> getList();
+    Notification getById(Long id);
 
     List<Notification> getByStatus(NotificationStatus status);
 

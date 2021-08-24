@@ -8,9 +8,9 @@ public interface NotificationResource {
 
     Notification createOrUpdate(Notification notificationDto);
 
-    Notification delete(String id);
+    void delete(Long id);
 
-    void setStatus(String id, NotificationStatus status);
+    void updateStatus(Long id, NotificationStatus status);
 
     ValidationResponse validate(Notification notificationDto);
 

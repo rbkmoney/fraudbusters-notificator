@@ -29,8 +29,9 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification(NotificationStatus.ACTIVE, ""))
-                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("select", "shopId,currency"))
+                .notification(TestObjectsFactory
+                        .testNotification(TestObjectsFactory.randomString(), NotificationStatus.ACTIVE, ""))
+                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("shopId,currency"))
                 .build());
 
         assertFalse(test);
@@ -51,8 +52,9 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification(NotificationStatus.ACTIVE, ""))
-                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("select", "shopId,currency"))
+                .notification(TestObjectsFactory
+                        .testNotification(TestObjectsFactory.randomString(), NotificationStatus.ACTIVE, ""))
+                .notificationTemplate(TestObjectsFactory.testNotificationTemplate("shopId,currency"))
                 .build());
 
         assertTrue(test);
