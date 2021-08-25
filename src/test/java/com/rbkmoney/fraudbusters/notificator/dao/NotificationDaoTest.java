@@ -8,7 +8,6 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.Notificat
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +33,6 @@ public class NotificationDaoTest {
     }
 
     @Test
-    @Disabled("fix dao to return id")
     void testCreate() {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
@@ -103,7 +101,7 @@ public class NotificationDaoTest {
                 .execute();
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         String newName = TestObjectsFactory.randomString();
-        Notification updatedNotification = TestObjectsFactory.testNotification(savedNotification);
+        Notification updatedNotification = savedNotification.into(Notification.class);
         updatedNotification.setName(newName);
         updatedNotification.setUpdatedAt(LocalDateTime.now());
 

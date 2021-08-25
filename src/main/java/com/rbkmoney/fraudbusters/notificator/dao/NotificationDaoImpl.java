@@ -8,6 +8,7 @@ import org.jooq.DeleteConditionStep;
 import org.jooq.Query;
 import org.jooq.SelectConditionStep;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -33,8 +34,11 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
                 .set(getDslContext().newRecord(NOTIFICATION, notification))
                 .onConflict(NOTIFICATION.ID)
                 .doUpdate()
-                .set(getDslContext().newRecord(NOTIFICATION, notification));
-        execute(query);
+                .set(getDslContext().newRecord(NOTIFICATION, notification))
+                .returning(NOTIFICATION.ID);
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        execute(query, keyHolder);
+        notification.setId(keyHolder.getKey().longValue());
         return notification;
     }
 
