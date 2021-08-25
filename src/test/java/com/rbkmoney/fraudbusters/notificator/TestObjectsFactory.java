@@ -3,17 +3,20 @@ package com.rbkmoney.fraudbusters.notificator;
 import com.rbkmoney.fraudbusters.notificator.constant.TemplateType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ReportRecord;
 import com.rbkmoney.fraudbusters.warehouse.Row;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public abstract class TestObjectsFactory {
@@ -119,6 +122,15 @@ public abstract class TestObjectsFactory {
         channel.setCreatedAt(LocalDateTime.now());
         channel.setType(ChannelType.mail);
         return channel;
+    }
+
+    public static ReportRecord testReportRecord() {
+        ReportRecord report = new ReportRecord();
+        report.setNotificationId(new Random().nextLong());
+        report.setStatus(ReportStatus.send);
+        report.setResult(randomString());
+        report.setCreatedAt(LocalDateTime.now());
+        return report;
     }
 
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
 import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,17 +71,17 @@ class ChannelResourceImplTest {
 
     @Test
     void getAll() throws Exception {
-        Channel channel1 = TestObjectsFactory.testChannel();
-        Channel channel2 = TestObjectsFactory.testChannel();
+        ChannelRecord channel1 = TestObjectsFactory.testChannelRecord();
+        ChannelRecord channel2 = TestObjectsFactory.testChannelRecord();
         dslContext.insertInto(CHANNEL)
-                .set(dslContext.newRecord(CHANNEL, channel1))
+                .set(channel1)
                 .newRecord()
-                .set(dslContext.newRecord(CHANNEL, channel2))
+                .set(channel2)
                 .execute();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/channels")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*]", hasSize(2)))
+                .andExpect(jsonPath("$[*]", hasSize(2)))
                 .andExpect(status().isOk());
 
     }
