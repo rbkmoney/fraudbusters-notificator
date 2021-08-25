@@ -10,16 +10,10 @@ import java.util.Optional;
 
 public interface ReportNotificationDao {
 
-    Optional<Long> insert(Report listRecord);
-
-    void remove(Long id);
-
-    void remove(Report listRecord);
+    Optional<Long> insert(Report report);
 
     Report getLastSendById(Long id);
 
-    List<Report> getNotificationByStatus(ReportStatus status);
-
-    List<Report> getNotificationByStatusAndFromTime(ReportStatus status, LocalDateTime from);
+    List<Report> getReportsByStatusAndFromTime(ReportStatus status, LocalDateTime from);
 
 }

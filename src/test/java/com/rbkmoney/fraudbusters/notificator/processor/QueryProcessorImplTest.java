@@ -3,16 +3,16 @@ package com.rbkmoney.fraudbusters.notificator.processor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
 import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
-import com.rbkmoney.fraudbusters.notificator.dao.ReportNotificationDao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ReportStatus;
-import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ReportRecord;
 import com.rbkmoney.fraudbusters.notificator.domain.QueryResult;
 import com.rbkmoney.fraudbusters.notificator.service.MailSenderServiceImpl;
 import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,9 +29,8 @@ import static org.mockito.Mockito.*;
 public class QueryProcessorImplTest {
 
     @Autowired
-    ReportNotificationDao reportNotificationDao;
-    @Autowired
     QueryProcessorImpl queryProcessor;
+
     @Autowired
     private DSLContext dslContext;
 
@@ -70,7 +69,11 @@ public class QueryProcessorImplTest {
 
         queryProcessor.process();
 
-        List<Report> notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.send);
+        List<ReportRecord> notificationByStatus = dslContext
+                .selectFrom(REPORT)
+                .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
+                        .from(REPORT)
+                        .where(REPORT.STATUS.eq(ReportStatus.send)))).fetch();
 
         String result = notificationByStatus.get(0).getResult();
         QueryResult queryResult = objectMapper.readValue(result, QueryResult.class);
@@ -78,18 +81,23 @@ public class QueryProcessorImplTest {
 
         queryProcessor.process();
 
-        notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.created);
+        notificationByStatus = dslContext
+                .selectFrom(REPORT)
+                .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
+                        .from(REPORT)
+                        .where(REPORT.STATUS.eq(ReportStatus.created)))).fetch();
         assertEquals(0L, notificationByStatus.size());
 
         Thread.sleep(1000L);
 
         queryProcessor.process();
 
-        notificationByStatus = reportNotificationDao.getNotificationByStatus(ReportStatus.skipped);
+        notificationByStatus = dslContext
+                .selectFrom(REPORT)
+                .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
+                        .from(REPORT)
+                        .where(REPORT.STATUS.eq(ReportStatus.skipped)))).fetch();
         assertEquals(0L, notificationByStatus.size());
-
         verify(mailSenderServiceImpl, times(1)).send(any());
-
     }
-
 }
