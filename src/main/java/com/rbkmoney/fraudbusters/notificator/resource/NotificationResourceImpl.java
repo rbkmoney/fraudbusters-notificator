@@ -83,4 +83,12 @@ public class NotificationResourceImpl implements NotificationResource {
         return validationResponse;
     }
 
+    @Override
+    @GetMapping(value = "/notifications")
+    public List<Notification> getAll() {
+        List<Notification> all = notificationDao.getAll();
+        log.info("NotificationResourceImpl get all notifications: {}", all);
+        return all;
+    }
+
 }

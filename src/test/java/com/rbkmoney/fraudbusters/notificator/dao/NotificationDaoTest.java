@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION;
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION_TEMPLATE;
@@ -129,5 +130,31 @@ public class NotificationDaoTest {
 
         Result<NotificationRecord> notifications = dslContext.fetch(NOTIFICATION);
         assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void testGetAll() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification1 = TestObjectsFactory.testNotificationRecord();
+        notification1.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
+        notification2.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification1)
+                .newRecord()
+                .set(notification2)
+                .execute();
+
+        List<Notification> all = notificationDao.getAll();
+
+        assertEquals(2, all.size());
+        assertIterableEquals(List.of(notification1.getName(), notification2.getName()),
+                all.stream()
+                        .map(Notification::getName)
+                        .collect(Collectors.toList()));
+
     }
 }

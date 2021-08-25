@@ -16,4 +16,6 @@ public interface NotificationDao {
 
     List<Notification> getByStatus(NotificationStatus status);
 
+    List<Notification> getAll();
+
 }

@@ -7,6 +7,7 @@ import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Query;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectWhereStep;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
@@ -64,6 +65,13 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
                 .selectFrom(NOTIFICATION)
                 .where(NOTIFICATION.STATUS.eq(status));
         return fetch(where, listRecordRowMapper);
+    }
+
+    @Override
+    public List<Notification> getAll() {
+        SelectWhereStep<NotificationRecord> notificationRecords = getDslContext()
+                .selectFrom(NOTIFICATION);
+        return fetch(notificationRecords, listRecordRowMapper);
     }
 
 }

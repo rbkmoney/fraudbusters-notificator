@@ -4,6 +4,8 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.domain.ValidationResponse;
 
+import java.util.List;
+
 public interface NotificationResource {
 
     Notification createOrUpdate(Notification notificationDto);
@@ -13,5 +15,7 @@ public interface NotificationResource {
     NotificationStatus updateStatus(Long id, NotificationStatus status);
 
     ValidationResponse validate(Notification notificationDto);
+
+    List<Notification> getAll();
 
 }
