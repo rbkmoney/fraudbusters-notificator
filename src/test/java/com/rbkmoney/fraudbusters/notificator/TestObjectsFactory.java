@@ -3,6 +3,7 @@ package com.rbkmoney.fraudbusters.notificator;
 import com.rbkmoney.fraudbusters.notificator.constant.TemplateType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
@@ -108,6 +109,16 @@ public abstract class TestObjectsFactory {
         channelRecord.setCreatedAt(LocalDateTime.now());
         channelRecord.setType(ChannelType.mail);
         return channelRecord;
+    }
+
+    public static Channel testChannel() {
+        Channel channel = new Channel();
+        channel.setName(randomString());
+        channel.setDestination(" test@mail.ru, two@test.ru");
+        channel.setSubject(randomString());
+        channel.setCreatedAt(LocalDateTime.now());
+        channel.setType(ChannelType.mail);
+        return channel;
     }
 
 }

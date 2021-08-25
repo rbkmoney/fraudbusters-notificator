@@ -26,7 +26,7 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
     }
 
     @Override
-    public String insert(Channel channel) {
+    public Channel insert(Channel channel) {
         Query query = getDslContext()
                 .insertInto(CHANNEL)
                 .set(getDslContext().newRecord(CHANNEL, channel))
@@ -34,7 +34,7 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
                 .doUpdate()
                 .set(getDslContext().newRecord(CHANNEL, channel));
         execute(query);
-        return channel.getName();
+        return channel;
     }
 
     @Override

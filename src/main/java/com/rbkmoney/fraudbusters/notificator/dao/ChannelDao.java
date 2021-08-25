@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ChannelDao {
 
-    String insert(Channel channel);
+    Channel insert(Channel channel);
 
-    void remove(String id);
+    void remove(String name);
 
     Channel getByName(String name);
 

@@ -102,15 +102,14 @@ public class NotificationDaoTest {
                 .execute();
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         String newName = TestObjectsFactory.randomString();
-        Notification updatedNotification = savedNotification.into(Notification.class);
-        updatedNotification.setName(newName);
-        updatedNotification.setUpdatedAt(LocalDateTime.now());
+        Notification notificationToUpdate = savedNotification.into(Notification.class);
+        notificationToUpdate.setName(newName);
+        notificationToUpdate.setUpdatedAt(LocalDateTime.now());
 
-        notificationDao.insert(updatedNotification);
+        Notification updatedNotification = notificationDao.insert(notificationToUpdate);
 
-        NotificationRecord actualNotification = dslContext.fetchOne(NOTIFICATION);
-        assertEquals(newName, actualNotification.getName());
-        assertNotEquals(savedNotification.getUpdatedAt(), actualNotification.getUpdatedAt());
+        assertEquals(newName, updatedNotification.getName());
+        assertNotEquals(savedNotification.getUpdatedAt(), updatedNotification.getUpdatedAt());
     }
 
     @Test

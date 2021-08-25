@@ -60,15 +60,14 @@ class NotificationResourceImplTest {
         List<Map<String, String>> result = List.of(values);
         when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(result);
 
-        assertDoesNotThrow(() -> notificationResource.createOrUpdate(notification));
+        Notification createdNotification = notificationResource.createOrUpdate(notification);
 
-        NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
-        assertNotNull(savedNotification.getId());
-        assertEquals(notification.getName(), savedNotification.getName());
-        assertEquals(notification.getFrequency(), savedNotification.getFrequency());
-        assertEquals(notification.getPeriod(), savedNotification.getPeriod());
-        assertEquals(notification.getTemplateId(), savedNotification.getTemplateId());
-        assertEquals(notification.getChannel(), savedNotification.getChannel());
+        assertNotNull(createdNotification.getId());
+        assertEquals(notification.getName(), createdNotification.getName());
+        assertEquals(notification.getFrequency(), createdNotification.getFrequency());
+        assertEquals(notification.getPeriod(), createdNotification.getPeriod());
+        assertEquals(notification.getTemplateId(), createdNotification.getTemplateId());
+        assertEquals(notification.getChannel(), createdNotification.getChannel());
     }
 
     @Test
