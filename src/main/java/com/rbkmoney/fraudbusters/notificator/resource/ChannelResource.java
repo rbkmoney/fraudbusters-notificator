@@ -8,7 +8,7 @@ public interface ChannelResource {
 
     Channel createOrUpdate(Channel channel);
 
-    Channel delete(String id);
+    void delete(String name);
 
     List<Channel> getAll();
 

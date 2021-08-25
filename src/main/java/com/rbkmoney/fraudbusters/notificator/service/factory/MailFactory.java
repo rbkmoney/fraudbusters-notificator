@@ -52,6 +52,14 @@ public class MailFactory {
         return subject;
     }
 
+    private String[] initRecipient(Channel channel) {
+        String[] split = channel.getDestination().trim().split("\\s*,\\s*");
+        if (split.length == 0) {
+            throw new UnknownRecipientException("Unknown recipient or can't parse: " + channel.getDestination());
+        }
+        return split;
+    }
+
     private Attachment initAttachment(ReportModel reportModel, String subject) {
         return queryResultSerde.deserialize(reportModel.getCurrentReport().getResult())
                 .map(queryResult ->
@@ -60,14 +68,6 @@ public class MailFactory {
                                 .fileName(attachmentFactory.createNameOfAttachment(subject))
                                 .build())
                 .orElse(null);
-    }
-
-    private String[] initRecipient(Channel channel) {
-        String[] split = channel.getDestination().trim().split("\\s*,\\s*");
-        if (split.length == 0) {
-            throw new UnknownRecipientException("Unknown recipient or can't parse: " + channel.getDestination());
-        }
-        return split;
     }
 
 }

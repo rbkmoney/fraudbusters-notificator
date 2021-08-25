@@ -46,14 +46,6 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
     }
 
     @Override
-    public void remove(Channel channel) {
-        DeleteConditionStep<ChannelRecord> where = getDslContext()
-                .delete(CHANNEL)
-                .where(CHANNEL.NAME.eq(channel.getName()));
-        execute(where);
-    }
-
-    @Override
     public Channel getByName(String name) {
         SelectConditionStep<ChannelRecord> where = getDslContext()
                 .selectFrom(CHANNEL)
