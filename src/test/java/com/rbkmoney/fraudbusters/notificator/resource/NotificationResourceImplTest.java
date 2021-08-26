@@ -1,5 +1,7 @@
 package com.rbkmoney.fraudbusters.notificator.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
 import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
@@ -11,12 +13,17 @@ import com.rbkmoney.fraudbusters.notificator.exception.WarehouseQueryException;
 import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import org.apache.thrift.TException;
 import org.jooq.DSLContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +36,19 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @PostgresqlSpringBootITest
 class NotificationResourceImplTest {
 
     @Autowired
-    private NotificationResource notificationResource;
+    private WebApplicationContext context;
+
+    protected final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
+    protected MockMvc mockMvc;
 
     @Autowired
     private DSLContext dslContext;
@@ -44,11 +58,11 @@ class NotificationResourceImplTest {
 
     @BeforeEach
     void setUp() {
-        dslContext.delete(NOTIFICATION);
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
     }
 
     @Test
-    void createOrUpdate() {
+    void createOrUpdate() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -57,11 +71,19 @@ class NotificationResourceImplTest {
         notification.setTemplateId(savedNotificationTemplate.getId());
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
-        List<Map<String, String>> result = List.of(values);
-        when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(result);
+        List<Map<String, String>> queryResult = List.of(values);
+        when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(queryResult);
 
-        Notification createdNotification = notificationResource.createOrUpdate(notification);
+        MvcResult result = mockMvc.perform(post("/notifications")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notification)))
+                .andExpect(status().isOk())
+                .andReturn();
 
+        Notification createdNotification =
+                objectMapper.readValue(result.getResponse().getContentAsString(), Notification.class);
+
+        assertFalse(dslContext.fetch(NOTIFICATION).isEmpty());
         assertNotNull(createdNotification.getId());
         assertEquals(notification.getName(), createdNotification.getName());
         assertEquals(notification.getFrequency(), createdNotification.getFrequency());
@@ -71,7 +93,7 @@ class NotificationResourceImplTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -83,13 +105,15 @@ class NotificationResourceImplTest {
                 .execute();
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
 
-        Assertions.assertDoesNotThrow(() -> notificationResource.delete(savedNotification.getId()));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/notifications/{id}", savedNotification.getId())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
         assertTrue(dslContext.fetch(NOTIFICATION).isEmpty());
     }
 
     @Test
-    void setStatus() {
+    void setStatus() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -102,17 +126,21 @@ class NotificationResourceImplTest {
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
 
+        MvcResult result = mockMvc.perform(put("/notifications/{id}/statuses", savedNotification.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newStatus)))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        NotificationStatus actualStatus = notificationResource.updateStatus(savedNotification.getId(), newStatus);
-
-
+        NotificationStatus actualStatus =
+                objectMapper.readValue(result.getResponse().getContentAsString(), NotificationStatus.class);
         NotificationRecord updatedNotification = dslContext.fetchOne(NOTIFICATION);
         assertEquals(newStatus, updatedNotification.getStatus());
         assertEquals(newStatus, actualStatus);
     }
 
     @Test
-    void validateWithFieldError() {
+    void validateWithFieldError() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -122,14 +150,21 @@ class NotificationResourceImplTest {
         notification.setName(null);
         notification.setChannel(null);
 
-        ValidationResponse validationResponse = notificationResource.validate(notification);
+        MvcResult result = mockMvc.perform(post("/notifications/validating")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notification)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ValidationResponse validationResponse =
+                objectMapper.readValue(result.getResponse().getContentAsString(), ValidationResponse.class);
 
         assertNull(validationResponse.getResult());
         assertEquals(2, validationResponse.getErrors().size());
     }
 
     @Test
-    void validateWithQueryError() {
+    void validateWithQueryError() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -139,7 +174,14 @@ class NotificationResourceImplTest {
         when(queryService.query(savedNotificationTemplate.getQueryText()))
                 .thenThrow(new WarehouseQueryException(new TException()));
 
-        ValidationResponse validationResponse = notificationResource.validate(notification);
+        MvcResult result = mockMvc.perform(post("/notifications/validating")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notification)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ValidationResponse validationResponse =
+                objectMapper.readValue(result.getResponse().getContentAsString(), ValidationResponse.class);
 
         assertNull(validationResponse.getResult());
         assertEquals(1, validationResponse.getErrors().size());
@@ -147,7 +189,7 @@ class NotificationResourceImplTest {
     }
 
     @Test
-    void validateWithAllErrors() {
+    void validateWithAllErrors() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -158,14 +200,21 @@ class NotificationResourceImplTest {
         notification.setChannel(null);
         when(queryService.query(anyString())).thenThrow(new WarehouseQueryException(new TException()));
 
-        ValidationResponse validationResponse = notificationResource.validate(notification);
+        MvcResult result = mockMvc.perform(post("/notifications/validating")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notification)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ValidationResponse validationResponse =
+                objectMapper.readValue(result.getResponse().getContentAsString(), ValidationResponse.class);
 
         assertNull(validationResponse.getResult());
         assertEquals(3, validationResponse.getErrors().size());
     }
 
     @Test
-    void validateOk() {
+    void validateOk() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
@@ -174,12 +223,19 @@ class NotificationResourceImplTest {
         notification.setTemplateId(savedNotificationTemplate.getId());
         Map<String, String> values = new HashMap<>();
         values.put("key", "value");
-        List<Map<String, String>> result = List.of(values);
-        when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(result);
+        List<Map<String, String>> queryResult = List.of(values);
+        when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(queryResult);
 
-        ValidationResponse validationResponse = notificationResource.validate(notification);
+        MvcResult result = mockMvc.perform(post("/notifications/validating")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(notification)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ValidationResponse validationResponse =
+                objectMapper.readValue(result.getResponse().getContentAsString(), ValidationResponse.class);
 
         assertTrue(CollectionUtils.isEmpty(validationResponse.getErrors()));
-        assertEquals(String.valueOf(result), validationResponse.getResult());
+        assertEquals(String.valueOf(queryResult), validationResponse.getResult());
     }
 }

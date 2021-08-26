@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.CHANNEL;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +46,7 @@ class ChannelResourceImplTest {
     @Test
     void createOrUpdate() throws Exception {
         Channel channel = TestObjectsFactory.testChannel();
+
         MvcResult result = mockMvc.perform(post("/channels")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(channel)))
@@ -52,6 +54,8 @@ class ChannelResourceImplTest {
                 .andReturn();
 
         Channel actualResponse = objectMapper.readValue(result.getResponse().getContentAsString(), Channel.class);
+
+        assertFalse(dslContext.fetch(CHANNEL).isEmpty());
         assertEquals(channel, actualResponse);
 
     }

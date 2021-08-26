@@ -53,7 +53,7 @@ public class NotificationResourceImpl implements NotificationResource {
     }
 
     @Override
-    @GetMapping(value = "/notifications/{id}/statuses")
+    @PutMapping(value = "/notifications/{id}/statuses")
     public NotificationStatus updateStatus(@Validated @PathVariable Long id,
                                            @Validated @RequestBody NotificationStatus status) {
         var notification = notificationDao.getById(id);
