@@ -1,44 +1,5 @@
-ALTER TABLE ch_notificator.notification DROP CONSTRAINT IF EXISTS notification_pkey;
-DROP TABLE IF EXISTS ch_notificator.notification;
-
-CREATE TABLE ch_notificator.notification_template
-(
-    id           SERIAL                      NOT NULL,
-    name         CHARACTER VARYING           NOT NULL,
-    type         CHARACTER VARYING           NOT NULL,
-    skeleton     TEXT                        NOT NULL,
-    query_text   CHARACTER VARYING           NOT NULL,
-    basic_params CHARACTER VARYING,
-    created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-    updated_at   TIMESTAMP WITHOUT TIME ZONE,
-
-    CONSTRAINT notification_template_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE ch_notificator.notification
-(
-    id          BIGSERIAL                          NOT NULL,
-    name        CHARACTER VARYING                  NOT NULL,
-    subject     CHARACTER VARYING                  NOT NULL,
-    created_at  TIMESTAMP WITHOUT TIME ZONE        NOT NULL DEFAULT now(),
-    updated_at  TIMESTAMP WITHOUT TIME ZONE,
-    period      CHARACTER VARYING                  NOT NULL,
-    frequency   CHARACTER VARYING                  NOT NULL,
-    channel     CHARACTER VARYING                  NOT NULL,
-    status      ch_notificator.notification_status NOT NULL,
-    template_id INT                                NOT NULL,
-
-    CONSTRAINT notification_pkey PRIMARY KEY (id),
-    CONSTRAINT notification_notification_tmpl_fkey FOREIGN KEY (template_id) REFERENCES ch_notificator.notification_template (id)
-);
-
-ALTER TABLE ch_notificator.report
-    RENAME notification_name TO notification_id;
-ALTER TABLE ch_notificator.report
-    ALTER COLUMN notification_id TYPE BIGINT USING notification_id::bigint;
-
-
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+---notification_template
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('> 4kk RUB by cardToken 90 days', 'MAIL_FORM', '<>', 'cardToken', 'SELECT cardToken, sum(amount/100) AS sm ' ||
                                                                           'FROM analytic.events_sink ' ||
                                                                           'WHERE toDate(:currentDate) - INTERVAL 90 day <= timestamp ' ||
@@ -48,7 +9,7 @@ VALUES ('> 4kk RUB by cardToken 90 days', 'MAIL_FORM', '<>', 'cardToken', 'SELEC
                                                                           'AND currency = ''RUB'' ' ||
                                                                           'GROUP BY cardToken HAVING sm > 4000000');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('refund-by-captured', 'MAIL_FORM', '<>', 't,shopId,currency',
         'SELECT t, shopId, currency, sm_ref AS refund, sm_all AS payment, sm_ref * 100 / sm_all AS metric ' ||
         'FROM ( SELECT timestamp AS t, shopId, currency, sum(amount / 100) AS sm_ref ' ||
@@ -64,7 +25,7 @@ VALUES ('refund-by-captured', 'MAIL_FORM', '<>', 't,shopId,currency',
         'WHERE sm_all > 0 AND metric > 10 ' ||
         'ORDER BY t DESC');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('count decline/all > 70% by 1 week', 'MAIL_FORM', '<>', 'shopId',
         'SELECT shopId,cnt,cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
         'FROM ( SELECT shopId, count(amount/100) AS cnt ' ||
@@ -78,7 +39,7 @@ VALUES ('count decline/all > 70% by 1 week', 'MAIL_FORM', '<>', 'shopId',
         'USING shopId ' ||
         'WHERE cnt_procent > 70');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('Count fingerprint by all', 'MAIL_FORM', '<>', 't,fingerprint',
         'SELECT timestamp AS t, fingerprint, count(fingerprint) AS cnt ' ||
         'FROM analytic.events_sink ' ||
@@ -88,7 +49,7 @@ VALUES ('Count fingerprint by all', 'MAIL_FORM', '<>', 't,fingerprint',
         'GROUP BY t, fingerprint ' ||
         'HAVING cnt > 70');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('>2 uniq shops by card', 'MAIL_FORM', '<>', 'cardToken', 'SELECT cardToken, count(invoiceId) AS invCnt ' ||
                                                                  'FROM analytic.events_sink ' ||
                                                                  'WHERE toDate(:currentDate) - INTERVAL 3 day > timestamp ' ||
@@ -103,7 +64,7 @@ VALUES ('>2 uniq shops by card', 'MAIL_FORM', '<>', 'cardToken', 'SELECT cardTok
                                                                  'GROUP BY cardToken ' ||
                                                                  'HAVING invCnt = 0');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('demo >40k', 'MAIL_FORM', '<>', 't,cardToken,currency',
         'SELECT timestamp AS t, cardToken, currency, max(amount / 100) AS maxAmount ' ||
         'FROM analytic.events_sink ' ||
@@ -111,7 +72,7 @@ VALUES ('demo >40k', 'MAIL_FORM', '<>', 't,cardToken,currency',
         'GROUP BY t, cardToken, currency ' ||
         'HAVING maxAmount >= 40000');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('demo >70% failed 5 min', 'MAIL_FORM', '<>', 'shopId',
         'SELECT shopId,cnt,cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
         'FROM ( SELECT shopId, count(invoiceId) AS cnt ' ||
@@ -126,14 +87,14 @@ VALUES ('demo >70% failed 5 min', 'MAIL_FORM', '<>', 'shopId',
         'USING shopId ' ||
         'WHERE cnt_procent > 70');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('demo chargeback > 3 last 5 min', 'MAIL_FORM', '<>', 'partyId', 'SELECT partyId, count() AS cnt ' ||
                                                                         'FROM analytic.events_sink_chargeback ' ||
                                                                         'WHERE toDateTime(eventTime) >= toDateTime(substring(:currentDateTime, 1, length(:currentDateTime) - 7)) - INTERVAL 5 MINUTE AND status = ''accepted'' AND partyId==''f42723d0-2022-4b66-9f92-4549769f1a92'' ' ||
                                                                         'GROUP BY partyId ' ||
                                                                         'HAVING cnt > 3');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('bin > 70 AND > 20 cnt', 'MAIL_FORM', '<>', 'bin,bankCountry',
         'SELECT bin, bankCountry, cnt, cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
         'FROM ( SELECT bin, bankCountry, count(concat(invoiceId, paymentId)) AS cnt ' ||
@@ -146,7 +107,7 @@ VALUES ('bin > 70 AND > 20 cnt', 'MAIL_FORM', '<>', 'bin,bankCountry',
         'USING bin, bankCountry ' ||
         'WHERE cnt_procent > 70 AND cnt + cnt_decline > 150');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('Count fingerprint by shop', 'MAIL_FORM', '<>', 't,shopId,fingerprint',
         'SELECT timestamp AS t, shopId, fingerprint, count(fingerprint) AS cnt ' ||
         'FROM analytic.events_sink ' ||
@@ -156,7 +117,7 @@ VALUES ('Count fingerprint by shop', 'MAIL_FORM', '<>', 't,shopId,fingerprint',
         'GROUP BY t, shopId, fingerprint ' ||
         'HAVING cnt > 70');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('New shops', 'MAIL_FORM', '<>', 'partyId, shopId', 'SELECT partyId, shopId, cntToday ' ||
                                                            'FROM ( SELECT partyId, shopId, count() AS cnt ' ||
                                                            'FROM analytic.events_sink ' ||
@@ -173,7 +134,7 @@ VALUES ('New shops', 'MAIL_FORM', '<>', 'partyId, shopId', 'SELECT partyId, shop
                                                            'USING  partyId, shopId ' ||
                                                            'WHERE cnt - cntToday == 0');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('> 50k EUR-USD by cardToken 90 days', 'MAIL_FORM', '<>', 'cardToken, currency',
         'SELECT cardToken, currency, sum(amount/100) AS sm ' ||
         'FROM analytic.events_sink ' ||
@@ -183,7 +144,7 @@ VALUES ('> 50k EUR-USD by cardToken 90 days', 'MAIL_FORM', '<>', 'cardToken, cur
         'GROUP BY cardToken, currency ' ||
         'HAVING sm > 50000');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('Old shops that start pay', 'MAIL_FORM', '<>', 'partyId, shopId', 'SELECT partyId, shopId, cntToday ' ||
                                                                           'FROM ( SELECT partyId, shopId, cntOlderThreeMonth AS cnt ' ||
                                                                           'FROM ( SELECT partyId, shopId, count() AS cntLastThreeMonth ' ||
@@ -210,7 +171,7 @@ VALUES ('Old shops that start pay', 'MAIL_FORM', '<>', 'partyId, shopId', 'SELEC
                                                                           'USING partyId, shopId ' ||
                                                                           'WHERE cnt - cntToday == 0');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('limits', 'MAIL_FORM', '<>', 't,cardToken,currency',
         'SELECT timestamp AS t, cardToken, currency, max(amount / 100) AS maxAmount, count() AS cnt, sum(amount / 100) AS sm_all ' ||
         'FROM analytic.events_sink ' ||
@@ -219,7 +180,7 @@ VALUES ('limits', 'MAIL_FORM', '<>', 't,cardToken,currency',
         'GROUP BY t, cardToken, currency ' ||
         'HAVING maxAmount >= 400000 OR (cnt >= 10 AND sm_all >= 400000)');
 
-INSERT INTO ch_notificator.notification_template (name, type, skeleton, basic_params, query_text)
+INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('> 600k EUR-USD by cardToken 90 days', 'MAIL_FORM', '<>', 'cardToken',
         'SELECT cardToken, sum(amount/100) AS sm ' ||
         'FROM analytic.events_sink ' ||

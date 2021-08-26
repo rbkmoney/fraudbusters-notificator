@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 @EnableSchedulerLock(defaultLockAtMostFor = "PT5M")
 public class ScheduleConfig {
 
-    public static final String TABLE_NAME = "ch_notificator.shedlock";
+    public static final String TABLE_NAME = "fb_notificator.shedlock";
 
     @Bean
     public LockProvider lockProvider(DataSource dataSource) {

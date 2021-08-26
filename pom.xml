@@ -23,12 +23,12 @@
         <dockerfile.base.service.tag>c0612d6052ac049496b72a23a04acb142035f249</dockerfile.base.service.tag>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
 
-        <db.name>ch_notificator</db.name>
+        <db.name>fb_notificator</db.name>
         <db.port>5432</db.port>
         <db.url>jdbc:postgresql://localhost:${db.port}/${db.name}</db.url>
         <db.user>postgres</db.user>
         <db.password>postgres</db.password>
-        <db.schema>ch_notificator</db.schema>
+        <db.schema>fb_notificator</db.schema>
         <db.common.lib.version>0.0.2-SNAPSHOT</db.common.lib.version>
         <shedlock-provider-jdbc-template.version>4.24.0</shedlock-provider-jdbc-template.version>
         <warehouse.proto.version>1.7-ac426a0</warehouse.proto.version>
