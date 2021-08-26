@@ -20,7 +20,6 @@
         <management.port>8023</management.port>
         <server.rest.port>8080</server.rest.port>
         <exposed.ports>${server.port} ${management.port} ${server.rest.port}</exposed.ports>
-        <dockerfile.base.service.tag>c0612d6052ac049496b72a23a04acb142035f249</dockerfile.base.service.tag>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
 
         <db.name>fb_notificator</db.name>
