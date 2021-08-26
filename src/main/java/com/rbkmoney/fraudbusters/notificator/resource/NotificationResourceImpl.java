@@ -12,6 +12,7 @@ import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import com.rbkmoney.fraudbusters.notificator.service.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class NotificationResourceImpl implements NotificationResource {
 
     @Override
     @DeleteMapping(value = "/notifications/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@Validated @PathVariable Long id) {
         notificationDao.remove(id);
         log.info("NotificationResourceImpl delete notification with id: {}", id);
