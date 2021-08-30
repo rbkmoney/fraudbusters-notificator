@@ -53,7 +53,7 @@ public class NotificationResourceImpl implements NotificationResource {
     }
 
     @Override
-    @PutMapping(value = "/notifications/{id}/statuses")
+    @PutMapping(value = "/notifications/{id}/status")
     public NotificationStatus updateStatus(@Validated @PathVariable Long id,
                                            @Validated @RequestBody NotificationStatus status) {
         var notification = notificationDao.getById(id);
@@ -65,7 +65,7 @@ public class NotificationResourceImpl implements NotificationResource {
 
     // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt
     @Override
-    @PostMapping(value = "/notifications/validating")
+    @PostMapping(value = "/notifications/validation")
     public ValidationResponse validate(@Validated @RequestBody Notification notification) {
         List<ValidationError> errors = validators.stream()
                 .map(validator -> validator.validate(notification))

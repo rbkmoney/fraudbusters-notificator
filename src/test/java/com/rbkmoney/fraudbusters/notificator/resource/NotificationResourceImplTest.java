@@ -126,7 +126,7 @@ class NotificationResourceImplTest {
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
 
-        MvcResult result = mockMvc.perform(put("/notifications/{id}/statuses", savedNotification.getId())
+        MvcResult result = mockMvc.perform(put("/notifications/{id}/status", savedNotification.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isOk())
@@ -150,7 +150,7 @@ class NotificationResourceImplTest {
         notification.setName(null);
         notification.setChannel(null);
 
-        MvcResult result = mockMvc.perform(post("/notifications/validating")
+        MvcResult result = mockMvc.perform(post("/notifications/validation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notification)))
                 .andExpect(status().isOk())
@@ -174,7 +174,7 @@ class NotificationResourceImplTest {
         when(queryService.query(savedNotificationTemplate.getQueryText()))
                 .thenThrow(new WarehouseQueryException(new TException()));
 
-        MvcResult result = mockMvc.perform(post("/notifications/validating")
+        MvcResult result = mockMvc.perform(post("/notifications/validation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notification)))
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ class NotificationResourceImplTest {
         notification.setChannel(null);
         when(queryService.query(anyString())).thenThrow(new WarehouseQueryException(new TException()));
 
-        MvcResult result = mockMvc.perform(post("/notifications/validating")
+        MvcResult result = mockMvc.perform(post("/notifications/validation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notification)))
                 .andExpect(status().isOk())
@@ -226,7 +226,7 @@ class NotificationResourceImplTest {
         List<Map<String, String>> queryResult = List.of(values);
         when(queryService.query(savedNotificationTemplate.getQueryText())).thenReturn(queryResult);
 
-        MvcResult result = mockMvc.perform(post("/notifications/validating")
+        MvcResult result = mockMvc.perform(post("/notifications/validation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notification)))
                 .andExpect(status().isOk())
