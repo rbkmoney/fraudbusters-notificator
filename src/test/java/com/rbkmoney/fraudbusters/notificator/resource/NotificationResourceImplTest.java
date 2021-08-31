@@ -126,17 +126,13 @@ class NotificationResourceImplTest {
         NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
         NotificationStatus newStatus = NotificationStatus.ARCHIVE;
 
-        MvcResult result = mockMvc.perform(put("/notifications/{id}/status", savedNotification.getId())
+        mockMvc.perform(put("/notifications/{id}/status", savedNotification.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newStatus)))
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isNoContent());
 
-        NotificationStatus actualStatus =
-                objectMapper.readValue(result.getResponse().getContentAsString(), NotificationStatus.class);
         NotificationRecord updatedNotification = dslContext.fetchOne(NOTIFICATION);
         assertEquals(newStatus, updatedNotification.getStatus());
-        assertEquals(newStatus, actualStatus);
     }
 
     @Test

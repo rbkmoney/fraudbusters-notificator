@@ -54,13 +54,13 @@ public class NotificationResourceImpl implements NotificationResource {
 
     @Override
     @PutMapping(value = "/notifications/{id}/status")
-    public NotificationStatus updateStatus(@Validated @PathVariable Long id,
-                                           @Validated @RequestBody NotificationStatus status) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updateStatus(@Validated @PathVariable Long id,
+                             @Validated @RequestBody NotificationStatus status) {
         var notification = notificationDao.getById(id);
         notification.setStatus(status);
         notificationDao.insert(notification);
         log.info("NotificationResourceImpl change status notification: {}", notification);
-        return status;
     }
 
     // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt

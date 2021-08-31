@@ -12,7 +12,7 @@ public interface NotificationResource {
 
     void delete(Long id);
 
-    NotificationStatus updateStatus(Long id, NotificationStatus status);
+    void updateStatus(Long id, NotificationStatus status);
 
     ValidationResponse validate(Notification notificationDto);
 
