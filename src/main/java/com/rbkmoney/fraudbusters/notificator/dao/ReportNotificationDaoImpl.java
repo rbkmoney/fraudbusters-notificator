@@ -5,7 +5,6 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ReportRecord;
 import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
 import org.jooq.Query;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -32,13 +31,13 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
     }
 
     @Override
-    public Optional<Long> insert(Report notification) {
+    public Optional<Long> insert(Report report) {
         Query query = getDslContext()
                 .insertInto(REPORT)
-                .set(getDslContext().newRecord(REPORT, notification))
+                .set(getDslContext().newRecord(REPORT, report))
                 .onConflict(REPORT.ID)
                 .doUpdate()
-                .set(getDslContext().newRecord(REPORT, notification))
+                .set(getDslContext().newRecord(REPORT, report))
                 .returning(REPORT.ID);
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         executeOne(query, keyHolder);
@@ -46,30 +45,14 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
     }
 
     @Override
-    public void remove(Long id) {
-        DeleteConditionStep<ReportRecord> deleteConditionStep = getDslContext()
-                .delete(REPORT)
-                .where(REPORT.ID.eq(id));
-        execute(deleteConditionStep);
-    }
-
-    @Override
-    public void remove(Report report) {
-        DeleteConditionStep<ReportRecord> deleteConditionStep = getDslContext()
-                .delete(REPORT)
-                .where(REPORT.ID.eq(report.getId()));
-        execute(deleteConditionStep);
-    }
-
-    @Override
-    public Report getLastSendByName(String name) {
+    public Report getLastSendById(Long id) {
         DSLContext dslContext = getDslContext();
         SelectConditionStep<ReportRecord> where = dslContext
                 .selectFrom(REPORT)
                 .where(REPORT.ID.eq(
                         dslContext.select(DSL.max(REPORT.ID))
                                 .from(REPORT)
-                                .where(REPORT.NOTIFICATION_NAME.eq(name)
+                                .where(REPORT.NOTIFICATION_ID.eq(id)
                                         .and(REPORT.STATUS.eq(ReportStatus.send))
                                 )
                         )
@@ -78,31 +61,7 @@ public class ReportNotificationDaoImpl extends AbstractDao implements ReportNoti
     }
 
     @Override
-    public Report getLastByNotificationAndStatus(String name, ReportStatus status) {
-        DSLContext dslContext = getDslContext();
-        SelectConditionStep<ReportRecord> where = dslContext
-                .selectFrom(REPORT)
-                .where(REPORT.ID.eq(
-                        dslContext.select(DSL.max(REPORT.ID))
-                                .from(REPORT)
-                                .where(REPORT.NOTIFICATION_NAME.eq(name)
-                                        .and(REPORT.STATUS.eq(status)))));
-        return fetchOne(where, listRecordRowMapper);
-    }
-
-    @Override
-    public List<Report> getNotificationByStatus(ReportStatus status) {
-        DSLContext dslContext = getDslContext();
-        SelectConditionStep<ReportRecord> where = dslContext
-                .selectFrom(REPORT)
-                .where(REPORT.ID.in(dslContext.select(DSL.max(REPORT.ID))
-                        .from(REPORT)
-                        .where(REPORT.STATUS.eq(status))));
-        return fetch(where, listRecordRowMapper);
-    }
-
-    @Override
-    public List<Report> getNotificationByStatusAndFromTime(ReportStatus status, LocalDateTime from) {
+    public List<Report> getReportsByStatusAndFromTime(ReportStatus status, LocalDateTime from) {
         DSLContext dslContext = getDslContext();
         SelectConditionStep<ReportRecord> where = dslContext
                 .selectFrom(REPORT)

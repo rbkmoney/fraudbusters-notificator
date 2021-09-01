@@ -4,6 +4,7 @@ import com.rbkmoney.fraudbusters.notificator.dao.ChannelDao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,33 +13,31 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("ch-manager")
 public class ChannelResourceImpl implements ChannelResource {
 
     private final ChannelDao channelDao;
 
     @Override
-    @PostMapping(value = "/channel")
+    @PostMapping(value = "/channels")
     public Channel createOrUpdate(@Validated @RequestBody Channel channel) {
-        channelDao.insert(channel);
-        log.info("ChannelResourceImpl created channel: {}", channel);
-        return channel;
+        Channel savedChannel = channelDao.insert(channel);
+        log.info("ChannelResourceImpl create channel: {}", savedChannel);
+        return savedChannel;
     }
 
     @Override
-    @DeleteMapping(value = "/channel/{name}")
-    public Channel delete(@Validated @PathVariable String name) {
-        Channel channel = channelDao.getByName(name);
+    @DeleteMapping(value = "/channels/{name}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void delete(@Validated @PathVariable String name) {
         channelDao.remove(name);
-        log.info("ChannelResourceImpl deleted channel: {}", channel);
-        return channel;
+        log.info("ChannelResourceImpl delete channel with name: {}", name);
     }
 
     @Override
-    @GetMapping(value = "/channel")
+    @GetMapping(value = "/channels")
     public List<Channel> getAll() {
         List<Channel> all = channelDao.getAll();
-        log.info("ChannelResourceImpl all channel: {}", all);
+        log.info("ChannelResourceImpl get all channels: {}", all);
         return all;
     }
 }

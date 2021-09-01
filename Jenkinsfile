@@ -6,12 +6,11 @@ build('fraudbusters-notificator', 'java-maven') {
     def javaServicePipeline
     runStage('load JavaService pipeline') {
         env.skipSonar = 'true'
-        javaServicePipeline = load("build_utils/jenkins_lib/pipeJavaService.groovy")
+        javaServicePipeline = load("build_utils/jenkins_lib/pipeJavaServiceInsideDocker.groovy")
     }
 
     def serviceName = env.REPO_NAME
     def mvnArgs = '-DjvmArgs="-Xmx256m"'
-    def useJava11 = true
 
-    javaServicePipeline(serviceName, useJava11, mvnArgs)
+    javaServicePipeline(serviceName, mvnArgs)
 }

@@ -1,10 +1,12 @@
 package com.rbkmoney.fraudbusters.notificator.processor;
 
 import com.rbkmoney.fraudbusters.notificator.dao.NotificationDao;
+import com.rbkmoney.fraudbusters.notificator.dao.NotificationTemplateDao;
 import com.rbkmoney.fraudbusters.notificator.dao.ReportNotificationDao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ReportStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.fraudbusters.notificator.domain.ReportModel;
 import com.rbkmoney.fraudbusters.notificator.serializer.QueryResultSerde;
@@ -30,6 +32,7 @@ public class QueryProcessorImpl implements QueryProcessor {
 
     private final NotificationDao notificationDao;
     private final ReportNotificationDao reportNotificationDao;
+    private final NotificationTemplateDao notificationTemplateDao;
     private final QueryService queryService;
     private final QueryResultSerde queryResultSerde;
     private final NotificationService notificationService;
@@ -54,32 +57,38 @@ public class QueryProcessorImpl implements QueryProcessor {
     }
 
     private ReportModel initReportModel(final Notification notification) {
-        Report lastByNotification = reportNotificationDao.getLastSendByName(notification.getName());
+        Report lastByNotification = reportNotificationDao.getLastSendById(notification.getId());
+        NotificationTemplate notificationTemplate = notificationTemplateDao.getById(notification.getTemplateId());
         return ReportModel.builder()
                 .notification(notification)
+                .notificationTemplate(notificationTemplate)
                 .lastReport(lastByNotification)
                 .build();
     }
 
     private Optional<ReportModel> queryForNotify(final ReportModel reportModel) {
         Notification notification = reportModel.getNotification();
+        NotificationTemplate notificationTemplate = reportModel.getNotificationTemplate();
         try {
-            List<Map<String, String>> queryResult = queryService.query(notification.getQueryText());
+            List<Map<String, String>> queryResult = queryService.query(notificationTemplate.getQueryText());
             Report currentReport = new Report();
-            currentReport.setNotificationName(notification.getName());
+            currentReport.setNotificationId(notification.getId());
             currentReport.setResult(queryResultSerde.serialize(queryResult));
             currentReport.setCreatedAt(LocalDateTime.now());
             currentReport.setStatus(ReportStatus.created);
             Optional<Long> insert = reportNotificationDao.insert(currentReport);
             insert.ifPresent(currentReport::setId);
-            log.info("QueryProcessorImpl queryForNotify notification: {} result: {}", notification, queryResult);
+            log.info("QueryProcessorImpl queryForNotify notification: {} template: {} result: {}", notification,
+                    notificationTemplate, queryResult);
             return Optional.of(ReportModel.builder()
                     .notification(notification)
+                    .notificationTemplate(notificationTemplate)
                     .lastReport(reportModel.getLastReport())
                     .currentReport(currentReport)
                     .build());
         } catch (Exception e) {
-            log.error("NotificationProcessorImpl error when queryForNotify for notification: {} e: ", notification, e);
+            log.error("NotificationProcessorImpl error when queryForNotify for notification: {} template: {} e: ",
+                    notification, notificationTemplate, e);
         }
         return Optional.empty();
     }

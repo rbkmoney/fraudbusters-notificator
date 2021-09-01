@@ -44,7 +44,7 @@ spring:
       idle-timeout: 30000
       maximum-pool-size: 10
     flyway:
-      url: "jdbc:postgresql://localhost:5432/ch_notificator"
+      url: "jdbc:postgresql://localhost:5432/fb_notificator"
 ---
 info:
   version: '@project.version@'

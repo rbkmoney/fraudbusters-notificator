@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -27,15 +26,16 @@ public class MailFactory {
     public String fromAddress;
 
     public Optional<Message> create(ReportModel reportModel) {
-        String alertChannel = reportModel.getNotification().getAlertchanel();
+        String alertChannel = reportModel.getNotification().getChannel();
         Channel channel = channelDao.getByName(alertChannel);
         if (channel == null) {
             log.warn("Not found channel with name: {}", alertChannel);
             return Optional.empty();
         }
-        String subject = initSubject(reportModel, channel);
+        String subject = reportModel.getNotification().getSubject();
+        String content = reportModel.getNotificationTemplate().getSkeleton();
         return Optional.of(Message.builder()
-                .content(reportModel.getNotification().getTemplateValue())
+                .content(content)
                 .to(initRecipient(channel))
                 .subject(subject)
                 .from(fromAddress)
@@ -43,12 +43,12 @@ public class MailFactory {
                 .build());
     }
 
-    private String initSubject(ReportModel reportModel, Channel channel) {
-        String subject = reportModel.getNotification().getSubject();
-        if (!StringUtils.hasLength(subject)) {
-            subject = channel.getSubject();
+    private String[] initRecipient(Channel channel) {
+        String[] split = channel.getDestination().trim().split("\\s*,\\s*");
+        if (split.length == 0) {
+            throw new UnknownRecipientException("Unknown recipient or can't parse: " + channel.getDestination());
         }
-        return subject;
+        return split;
     }
 
     private Attachment initAttachment(ReportModel reportModel, String subject) {
@@ -59,14 +59,6 @@ public class MailFactory {
                                 .fileName(attachmentFactory.createNameOfAttachment(subject))
                                 .build())
                 .orElse(null);
-    }
-
-    private String[] initRecipient(Channel channel) {
-        String[] split = channel.getDestination().trim().split("\\s*,\\s*");
-        if (split.length == 0) {
-            throw new UnknownRecipientException("Unknown recipient or can't parse: " + channel.getDestination());
-        }
-        return split;
     }
 
 }
