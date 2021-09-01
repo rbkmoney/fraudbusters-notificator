@@ -63,7 +63,6 @@ public class NotificationResourceImpl implements NotificationResource {
         log.info("NotificationResourceImpl change status notification: {}", notification);
     }
 
-    // TODO возможно отсюда это можно убрать и реализовать на уровне fb-mngmnt
     @Override
     @PostMapping(value = "/notifications/validation")
     public ValidationResponse validate(@Validated @RequestBody Notification notification) {
@@ -71,14 +70,11 @@ public class NotificationResourceImpl implements NotificationResource {
                 .map(validator -> validator.validate(notification))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-
         ValidationResponse validationResponse = new ValidationResponse();
-
         if (!CollectionUtils.isEmpty(errors)) {
             validationResponse.setErrors(errors);
             return validationResponse;
         }
-        // TODO нужен ли в ответе валидации результат?
         NotificationTemplate notificationTemplate = notificationTemplateDao.getById(notification.getTemplateId());
         List<Map<String, String>> result = queryService.query(notificationTemplate.getQueryText());
         validationResponse.setResult(String.valueOf(result));

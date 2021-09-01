@@ -108,7 +108,6 @@ public abstract class TestObjectsFactory {
         ChannelRecord channelRecord = new ChannelRecord();
         channelRecord.setName(randomString());
         channelRecord.setDestination(" test@mail.ru, two@test.ru");
-        channelRecord.setSubject(randomString());
         channelRecord.setCreatedAt(LocalDateTime.now());
         channelRecord.setType(ChannelType.mail);
         return channelRecord;
@@ -118,7 +117,6 @@ public abstract class TestObjectsFactory {
         Channel channel = new Channel();
         channel.setName(randomString());
         channel.setDestination(" test@mail.ru, two@test.ru");
-        channel.setSubject(randomString());
         channel.setCreatedAt(LocalDateTime.now());
         channel.setType(ChannelType.mail);
         return channel;

@@ -31,8 +31,6 @@ import java.util.Map;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION;
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION_TEMPLATE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -160,31 +158,6 @@ class NotificationResourceImplTest {
     }
 
     @Test
-    void validateWithQueryError() throws Exception {
-        dslContext.insertInto(NOTIFICATION_TEMPLATE)
-                .set(TestObjectsFactory.testNotificationTemplateRecord())
-                .execute();
-        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification();
-        notification.setTemplateId(savedNotificationTemplate.getId());
-        when(queryService.query(savedNotificationTemplate.getQueryText()))
-                .thenThrow(new WarehouseQueryException(new TException()));
-
-        MvcResult result = mockMvc.perform(post("/notifications/validation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(notification)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        ValidationResponse validationResponse =
-                objectMapper.readValue(result.getResponse().getContentAsString(), ValidationResponse.class);
-
-        assertNull(validationResponse.getResult());
-        assertEquals(1, validationResponse.getErrors().size());
-        assertThat(validationResponse.getErrors().get(0).getErrorReason(), containsString("Query has error"));
-    }
-
-    @Test
     void validateWithAllErrors() throws Exception {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
@@ -194,6 +167,7 @@ class NotificationResourceImplTest {
         notification.setTemplateId(savedNotificationTemplate.getId());
         notification.setName(null);
         notification.setChannel(null);
+        notification.setFrequency(null);
         when(queryService.query(anyString())).thenThrow(new WarehouseQueryException(new TException()));
 
         MvcResult result = mockMvc.perform(post("/notifications/validation")

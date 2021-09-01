@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class MailFactory {
             log.warn("Not found channel with name: {}", alertChannel);
             return Optional.empty();
         }
-        String subject = initSubject(reportModel, channel);
+        String subject = reportModel.getNotification().getSubject();
         String content = reportModel.getNotificationTemplate().getSkeleton();
         return Optional.of(Message.builder()
                 .content(content)
@@ -42,14 +41,6 @@ public class MailFactory {
                 .from(fromAddress)
                 .attachment(initAttachment(reportModel, subject))
                 .build());
-    }
-
-    private String initSubject(ReportModel reportModel, Channel channel) {
-        String subject = reportModel.getNotification().getSubject();
-        if (!StringUtils.hasLength(subject)) {
-            subject = channel.getSubject();
-        }
-        return subject;
     }
 
     private String[] initRecipient(Channel channel) {

@@ -53,7 +53,6 @@ CREATE TABLE fb_notificator.channel
     created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     type        fb_notificator.channel_type NOT NULL,
     destination CHARACTER VARYING           NOT NULL,
-    subject     CHARACTER VARYING           NOT NULL,
     CONSTRAINT channel_pkey PRIMARY KEY (NAME)
 );
 
