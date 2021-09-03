@@ -2,7 +2,7 @@ server:
   port: '@server.port@'
   rest:
     port: '@server.rest.port@'
-    endpoint: ch-manager
+    endpoints: notifications, channels, reports
 management:
   security:
     flag: false
@@ -44,7 +44,7 @@ spring:
       idle-timeout: 30000
       maximum-pool-size: 10
     flyway:
-      url: "jdbc:postgresql://localhost:5432/fb_notificator"
+      schemas: fb_notificator
 ---
 info:
   version: '@project.version@'

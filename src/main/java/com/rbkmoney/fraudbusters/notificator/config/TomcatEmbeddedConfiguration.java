@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @Configuration
 public class TomcatEmbeddedConfiguration {
@@ -26,8 +27,8 @@ public class TomcatEmbeddedConfiguration {
     @Value("${server.rest.port}")
     private int restPort;
 
-    @Value("/${server.rest.endpoint}/")
-    private String restEndpoint;
+    @Value("/${server.rest.endpoints}/")
+    private List<String> restEndpoints;
 
     @Bean
     public ServletWebServerFactory servletContainer() {
@@ -47,7 +48,7 @@ public class TomcatEmbeddedConfiguration {
                                             FilterChain filterChain) throws ServletException, IOException {
                 String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
-                        && !(servletPath.startsWith(restEndpoint)
+                        && !(restEndpoints.stream().anyMatch(servletPath::startsWith)
                         || servletPath.startsWith(HEALTH)
                         || servletPath.startsWith("/swagger-ui.html")
                         || servletPath.startsWith("/webjars/springfox-swagger-ui/**/*")
@@ -78,8 +79,9 @@ public class TomcatEmbeddedConfiguration {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain) throws ServletException, IOException {
+                String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
-                        && request.getServletPath().startsWith(restEndpoint)) {
+                        && restEndpoints.stream().anyMatch(servletPath::startsWith)) {
                     woodyFlow.createServiceFork(() -> {
                         try {
                             filterChain.doFilter(request, response);
@@ -101,7 +103,7 @@ public class TomcatEmbeddedConfiguration {
         filterRegistrationBean.setFilter(filter);
         filterRegistrationBean.setOrder(-50);
         filterRegistrationBean.setName("woodyFilter");
-        filterRegistrationBean.addUrlPatterns(restEndpoint + "*");
+        restEndpoints.forEach(endpoint -> filterRegistrationBean.addUrlPatterns(endpoint + "*"));
         return filterRegistrationBean;
     }
 }
