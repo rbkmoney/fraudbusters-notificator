@@ -48,7 +48,7 @@ public class TomcatEmbeddedConfiguration {
                                             FilterChain filterChain) throws ServletException, IOException {
                 String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
-                        && !(restEndpoints.contains(servletPath)
+                        && !(restEndpoints.stream().anyMatch(servletPath::startsWith)
                         || servletPath.startsWith(HEALTH)
                         || servletPath.startsWith("/swagger-ui.html")
                         || servletPath.startsWith("/webjars/springfox-swagger-ui/**/*")
@@ -81,7 +81,7 @@ public class TomcatEmbeddedConfiguration {
                                             FilterChain filterChain) throws ServletException, IOException {
                 String servletPath = request.getServletPath();
                 if ((request.getLocalPort() == restPort)
-                        && restEndpoints.contains(servletPath)) {
+                        && restEndpoints.stream().anyMatch(servletPath::startsWith)) {
                     woodyFlow.createServiceFork(() -> {
                         try {
                             filterChain.doFilter(request, response);
