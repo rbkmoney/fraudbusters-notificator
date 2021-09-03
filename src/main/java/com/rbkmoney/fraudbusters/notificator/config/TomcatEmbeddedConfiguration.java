@@ -103,7 +103,7 @@ public class TomcatEmbeddedConfiguration {
         filterRegistrationBean.setFilter(filter);
         filterRegistrationBean.setOrder(-50);
         filterRegistrationBean.setName("woodyFilter");
-        restEndpoints.forEach(endpoint -> filterRegistrationBean.addUrlPatterns(endpoint + "*"));
+        restEndpoints.forEach(endpoint -> filterRegistrationBean.addUrlPatterns("/" + endpoint + "/*"));
         return filterRegistrationBean;
     }
 }
