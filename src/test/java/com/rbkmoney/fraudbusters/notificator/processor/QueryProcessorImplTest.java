@@ -13,9 +13,11 @@ import com.rbkmoney.fraudbusters.notificator.service.MailSenderServiceImpl;
 import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 @PostgresqlSpringBootITest
 public class QueryProcessorImplTest {
 
@@ -41,6 +44,12 @@ public class QueryProcessorImplTest {
 
     @MockBean
     QueryService queryService;
+
+
+    @BeforeEach
+    void setUp() {
+        dslContext.delete(NOTIFICATION).execute();
+    }
 
     @Test
     void process() throws Exception {
