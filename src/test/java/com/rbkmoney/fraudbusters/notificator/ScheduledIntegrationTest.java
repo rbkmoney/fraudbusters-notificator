@@ -10,6 +10,7 @@ import com.rbkmoney.fraudbusters.notificator.service.iface.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -17,6 +18,7 @@ import java.util.function.Predicate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("default")
 @PostgresqlSpringBootITest
 public class ScheduledIntegrationTest {
 
