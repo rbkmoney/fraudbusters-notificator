@@ -75,7 +75,7 @@ VALUES ('demo >40k', 'MAIL_FORM', '<>', 't,cardToken,currency',
 
 INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_params, query_text)
 VALUES ('demo >70% failed 5 min', 'MAIL_FORM', '<>', 'shopId',
-        'SELECT shopId,cnt,cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
+        'SELECT shopId, cnt, cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
         'FROM ' ||
         '( SELECT shopId, count(invoiceId) AS cnt ' ||
         'FROM fraud.payment ' ||
@@ -100,12 +100,12 @@ INSERT INTO fb_notificator.notification_template (name, type, skeleton, basic_pa
 VALUES ('bin > 70 AND > 20 cnt', 'MAIL_FORM', '<>', 'bin,bankCountry',
         'SELECT bin, bankCountry, cnt, cnt_decline, cnt_decline * 100/cnt AS cnt_procent ' ||
         'FROM ' ||
-        '( SELECT bin, bankCountry, count(concat(invoiceId, paymentId)) AS cnt ' ||
+        '( SELECT bin, bankCountry, count(concat(invoiceId, id)) AS cnt ' ||
         'FROM fraud.payment ' ||
         'WHERE timestamp >= toDate(:currentDate) - INTERVAL 2 day AND shopId != ''TEST'' AND status = ''captured'' AND currency = ''RUB'' ' ||
         'GROUP BY bin, bankCountry ) ' ||
         'LEFT OUTER JOIN ' ||
-        '( SELECT bin, bankCountry, count(concat(invoiceId, paymentId)) AS cnt_decline ' ||
+        '( SELECT bin, bankCountry, count(concat(invoiceId, id)) AS cnt_decline ' ||
         'FROM fraud.payment ' ||
         'WHERE timestamp >= toDate(:currentDate) - INTERVAL 2 day AND status = ''failed'' ' ||
         'AND shopId != ''TEST'' AND ( errorCode=''authorization_failed:rejected_by_issuer'' OR errorCode=''authorization_failed:insufficient_funds'' OR errorCode=''preauthorization_failed:three_ds_not_finished'' OR errorCode=''no_route_found:risk_score_is_too_high'' ) ' ||
