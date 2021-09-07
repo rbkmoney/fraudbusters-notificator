@@ -10,12 +10,6 @@ VALUES ('notification_4', 'Статические фингерпринты', '1d
 INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
 VALUES ('notification_5', '>2 uniq shops by card', '1d', '10m', 'sb-channel', 'ACTIVE', 5);
 INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
-VALUES ('notification_6', 'notify > 40k', '1d', '1m', 'demo', 'ACTIVE', 6);
-INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
-VALUES ('notification_7', 'demo >70% failed 5 min', '1d', '1m', 'demo', 'ACTIVE', 7);
-INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
-VALUES ('notification_8', 'demo chargeback > 3 last 5 min', '1d', '1m', 'demo', 'ACTIVE', 8);
-INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
 VALUES ('notification_9', 'bin > 70 and > 20 cnt', '1d', '10m', 'sb-channel', 'ACTIVE', 9);
 INSERT INTO fb_notificator.notification (name, subject, period, frequency, channel, status, template_id)
 VALUES ('notification_10', 'Статические фингерпринты по магазинам', '1d', '10m', 'sb-channel', 'ACTIVE', 10);
