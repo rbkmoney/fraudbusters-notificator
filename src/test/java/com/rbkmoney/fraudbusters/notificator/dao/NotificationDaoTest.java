@@ -10,6 +10,7 @@ import org.jooq.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATI
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION_TEMPLATE;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ActiveProfiles("test")
 @PostgresqlSpringBootITest
 public class NotificationDaoTest {
 
@@ -30,7 +32,7 @@ public class NotificationDaoTest {
 
     @BeforeEach
     void setUp() {
-        dslContext.delete(NOTIFICATION);
+        dslContext.delete(NOTIFICATION).execute();
     }
 
     @Test
