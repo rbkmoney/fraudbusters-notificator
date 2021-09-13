@@ -24,19 +24,19 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void send(ReportModel reportModel) {
-        log.info("NotificationProcessorImpl start sentNotification!");
+        log.info("NotificationServiceImpl start send notification");
         Report report = reportModel.getCurrentReport();
         if (!changeQueryResultFilter.test(reportModel)) {
             report.setStatus(ReportStatus.skipped);
             log.info("NotificationServiceImpl skipped: {}", report);
             return;
         }
-        sendMail(reportModel, report);
+        sendNotification(reportModel, report);
         reportNotificationDao.insert(report);
         log.info("NotificationServiceImpl send: {}", report);
     }
 
-    private void sendMail(ReportModel reportModel, Report report) {
+    private void sendNotification(ReportModel reportModel, Report report) {
         mailFactory.create(reportModel).ifPresentOrElse(message -> {
             try {
                 mailSenderService.send(message);

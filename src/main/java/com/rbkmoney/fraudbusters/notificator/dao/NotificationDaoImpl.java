@@ -3,6 +3,7 @@ package com.rbkmoney.fraudbusters.notificator.dao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
+import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Query;
@@ -68,7 +69,7 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
     }
 
     @Override
-    public List<Notification> getAll() {
+    public List<Notification> getAll(FilterDto filter) {
         SelectWhereStep<NotificationRecord> notificationRecords = getDslContext()
                 .selectFrom(NOTIFICATION);
         return fetch(notificationRecords, listRecordRowMapper);

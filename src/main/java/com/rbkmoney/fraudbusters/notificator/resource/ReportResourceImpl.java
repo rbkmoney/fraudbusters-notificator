@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ReportResourceImpl implements ReportResource {
+public class ReportResourceImpl implements ReportResource { // TODO забыли про этот метод, он нужен?
 
     private final ReportNotificationDao reportNotificationDao;
 

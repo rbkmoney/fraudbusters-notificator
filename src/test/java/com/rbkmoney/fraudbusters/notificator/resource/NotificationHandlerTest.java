@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("test")
 @PostgresqlSpringBootITest
-class NotificationResourceImplTest {
+class NotificationHandlerTest {
 
     @Autowired
     private WebApplicationContext context;
