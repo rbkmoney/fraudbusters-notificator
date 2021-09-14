@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.rbkmoney.damsel.fraudbusters_notificator.fraudbusters_notificatorConstants.VALIDATION_ERROR;
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION;
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION_TEMPLATE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,7 +47,26 @@ class NotificationHandlerTest {
     }
 
     @Test
-    void createOrUpdate() {
+    void createOrUpdateWithValidationError() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        Notification notification = TestObjectsFactory.testNotification();
+        notification.setTemplateId(savedNotificationTemplate.getId());
+        when(queryService.query(savedNotificationTemplate.getQueryText()))
+                .thenThrow(new WarehouseQueryException(new TException()));
+
+        NotificationServiceException exception =
+                assertThrows(NotificationServiceException.class, () -> notificationHandler.create(notification));
+
+        assertEquals(VALIDATION_ERROR, exception.getCode());
+        assertThat(exception.getReason(), containsString("Query has error"));
+
+    }
+
+    @Test
+    void createOrUpdate() throws TException {
         dslContext.insertInto(NOTIFICATION_TEMPLATE)
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();

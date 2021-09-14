@@ -63,22 +63,6 @@ public abstract class TestObjectsFactory {
         return notification;
     }
 
-    public static Notification testNotification(NotificationRecord notificationRecord) {
-        Notification notification = new Notification();
-        notification.setUpdatedAt(notificationRecord.getUpdatedAt().toString());
-        notification.setId(notificationRecord.getId());
-        notification.setName(notificationRecord.getName());
-        notification.setChannel(notificationRecord.getChannel());
-        notification.setCreatedAt(notificationRecord.getCreatedAt().toString());
-        notification.setStatus(com.rbkmoney.damsel.fraudbusters_notificator.NotificationStatus
-                .valueOf(notificationRecord.getStatus().getLiteral()));
-        notification.setFrequency(notificationRecord.getFrequency());
-        notification.setPeriod(notificationRecord.getPeriod());
-        notification.setSubject(notificationRecord.getSubject());
-        notification.setTemplateId(notificationRecord.getTemplateId());
-        return notification;
-    }
-
     public static NotificationRecord testNotificationRecord() {
         NotificationRecord notification = new NotificationRecord();
         notification.setFrequency("1s");

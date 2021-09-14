@@ -3,7 +3,6 @@ package com.rbkmoney.fraudbusters.notificator.resource;
 import com.rbkmoney.damsel.fraudbusters_notificator.*;
 import com.rbkmoney.fraudbusters.notificator.dao.NotificationDao;
 import com.rbkmoney.fraudbusters.notificator.dao.NotificationTemplateDao;
-import com.rbkmoney.fraudbusters.notificator.exception.ValidationNotificationException;
 import com.rbkmoney.fraudbusters.notificator.resource.converter.NotificationConverter;
 import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
@@ -11,6 +10,7 @@ import com.rbkmoney.fraudbusters.notificator.service.dto.PageDto;
 import com.rbkmoney.fraudbusters.notificator.service.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.thrift.TException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.rbkmoney.damsel.fraudbusters_notificator.fraudbusters_notificatorConstants.VALIDATION_ERROR;
 
 @Slf4j
 @Component
@@ -31,11 +33,13 @@ public class NotificationHandler implements NotificationServiceSrv.Iface {
     private final NotificationConverter notificationConverter;
 
     @Override
-    public Notification create(Notification notification) {
+    public Notification create(Notification notification) throws TException {
         var validationResult = validate(notification);
         if (validationResult.isSetErrors()) {
-            throw new ValidationNotificationException(
-                    "Exception when create notification, errors: " + String.join(", ", validationResult.getErrors()));
+            throw new NotificationServiceException()
+                    .setCode(VALIDATION_ERROR)
+                    .setReason("Error while validate notification, errors: " +
+                            String.join(", ", validationResult.getErrors()));
         }
         var savedNotification = notificationDao.insert(notificationConverter.toTarget(notification));
         log.info("NotificationHandler create notification: {}", savedNotification);
