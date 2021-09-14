@@ -5,17 +5,13 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import com.rbkmoney.mapper.RecordRowMapper;
-import org.jooq.DeleteConditionStep;
-import org.jooq.Query;
-import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
+import org.jooq.*;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.CHANNEL;
 
@@ -65,12 +61,10 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
 
     @Override
     public List<ChannelType> getAllTypes() {
-        return getDslContext().select(CHANNEL.TYPE)
-                .from(CHANNEL)
-                .fetch()
-                .stream()
-                .map(Record1::value1)
-                .collect(Collectors.toList());
+        SelectJoinStep<Record1<ChannelType>> select = getDslContext()
+                .select(CHANNEL.TYPE)
+                .from(CHANNEL);
+        return fetch(select, (resultSet, i) -> ChannelType.valueOf(resultSet.getString(CHANNEL.TYPE.getName())));
     }
 
 }

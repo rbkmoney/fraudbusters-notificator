@@ -5,6 +5,7 @@ import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
+import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ public class NotificationDaoTest {
 
     @BeforeEach
     void setUp() {
-        dslContext.delete(NOTIFICATION).execute();
+        dslContext.deleteFrom(NOTIFICATION).execute();
     }
 
     @Test
@@ -41,7 +42,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification();
+        Notification notification = TestObjectsFactory.testTableNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
 
         Notification savedNotification = notificationDao.insert(notification);
@@ -149,7 +150,7 @@ public class NotificationDaoTest {
                 .set(notification2)
                 .execute();
 
-        List<Notification> all = notificationDao.getAll();
+        List<Notification> all = notificationDao.getAll(FilterDto.builder().build());
 
         assertEquals(2, all.size());
         assertIterableEquals(List.of(notification1.getName(), notification2.getName()),

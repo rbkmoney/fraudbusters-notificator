@@ -18,7 +18,9 @@ public class NotificationConverter
             return null;
         }
         Notification result = new Notification();
-        result.setId(notification.getId());
+        if (notification.getId() != 0) {
+            result.setId(notification.getId());
+        }
         result.setName(notification.getName());
         result.setSubject(notification.getSubject());
         result.setChannel(notification.getChannel());

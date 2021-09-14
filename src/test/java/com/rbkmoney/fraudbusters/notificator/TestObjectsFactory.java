@@ -1,11 +1,11 @@
 package com.rbkmoney.fraudbusters.notificator;
 
+import com.rbkmoney.damsel.fraudbusters_notificator.Channel;
+import com.rbkmoney.damsel.fraudbusters_notificator.Notification;
 import com.rbkmoney.fraudbusters.notificator.constant.TemplateType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ReportStatus;
-import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Channel;
-import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.NotificationTemplate;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
@@ -40,6 +40,20 @@ public abstract class TestObjectsFactory {
         notification.setFrequency("1s");
         LocalDateTime now = LocalDateTime.now();
         notification.setName(randomString());
+        notification.setCreatedAt(now.toString());
+        notification.setUpdatedAt(now.toString());
+        notification.setChannel(randomString());
+        notification.setPeriod("1d");
+        notification.setStatus(com.rbkmoney.damsel.fraudbusters_notificator.NotificationStatus.ACTIVE);
+        notification.setSubject(randomString());
+        return notification;
+    }
+
+    public static com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification testTableNotification() {
+        var notification = new com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification();
+        notification.setFrequency("1s");
+        LocalDateTime now = LocalDateTime.now();
+        notification.setName(randomString());
         notification.setCreatedAt(now);
         notification.setUpdatedAt(now);
         notification.setChannel(randomString());
@@ -51,12 +65,13 @@ public abstract class TestObjectsFactory {
 
     public static Notification testNotification(NotificationRecord notificationRecord) {
         Notification notification = new Notification();
-        notification.setUpdatedAt(notificationRecord.getUpdatedAt());
+        notification.setUpdatedAt(notificationRecord.getUpdatedAt().toString());
         notification.setId(notificationRecord.getId());
         notification.setName(notificationRecord.getName());
         notification.setChannel(notificationRecord.getChannel());
-        notification.setCreatedAt(notificationRecord.getCreatedAt());
-        notification.setStatus(notificationRecord.getStatus());
+        notification.setCreatedAt(notificationRecord.getCreatedAt().toString());
+        notification.setStatus(com.rbkmoney.damsel.fraudbusters_notificator.NotificationStatus
+                .valueOf(notificationRecord.getStatus().getLiteral()));
         notification.setFrequency(notificationRecord.getFrequency());
         notification.setPeriod(notificationRecord.getPeriod());
         notification.setSubject(notificationRecord.getSubject());
@@ -117,8 +132,8 @@ public abstract class TestObjectsFactory {
         Channel channel = new Channel();
         channel.setName(randomString());
         channel.setDestination(" test@mail.ru, two@test.ru");
-        channel.setCreatedAt(LocalDateTime.now());
-        channel.setType(ChannelType.mail);
+        channel.setCreatedAt(LocalDateTime.now().toString());
+        channel.setType(com.rbkmoney.damsel.fraudbusters_notificator.ChannelType.mail);
         return channel;
     }
 

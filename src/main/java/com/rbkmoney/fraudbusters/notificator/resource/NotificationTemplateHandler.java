@@ -7,12 +7,13 @@ import com.rbkmoney.fraudbusters.notificator.dao.NotificationTemplateDao;
 import com.rbkmoney.fraudbusters.notificator.resource.converter.NotificationTemplateConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class NotificationTemplateHandler implements NotificationTemplateServiceSrv.Iface {
 
@@ -20,7 +21,7 @@ public class NotificationTemplateHandler implements NotificationTemplateServiceS
     private final NotificationTemplateConverter notificationTemplateConverter;
 
     @Override
-    public NotificationTemplateListResponse getAll() throws TException {
+    public NotificationTemplateListResponse getAll() {
         var notificationTemplates = notificationTemplateDao.getAll();
         log.info("NotificationTemplateHandler get all templates: {}", notificationTemplates);
         List<NotificationTemplate> result = notificationTemplates.stream()
