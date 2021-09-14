@@ -32,7 +32,7 @@
         <shedlock-provider-jdbc-template.version>4.24.0</shedlock-provider-jdbc-template.version>
         <warehouse.proto.version>1.7-ac426a0</warehouse.proto.version>
         <testcontainers.annotations.version>1.3.0</testcontainers.annotations.version>
-        <fraudbusters.notificator.proto.version>1.14-186a16b</fraudbusters.notificator.proto.version>
+        <fraudbusters.notificator.proto.version>1.16-6cd61dd</fraudbusters.notificator.proto.version>
     </properties>
 
     <dependencies>
