@@ -64,7 +64,7 @@ mail:
   smtp:
     auth: false
     timeout: 30000
-    from-address: "fb-notificator@rbkmoney.com"
+    from-address: "NotificationService@rbkmoney.com"
     starttls:
       enable: true
 ---

@@ -31,12 +31,12 @@ public class NotificationServiceImpl implements NotificationService {
             log.info("NotificationServiceImpl skipped: {}", report);
             return;
         }
-        sendNotification(reportModel, report);
+        sendMail(reportModel, report);
         reportNotificationDao.insert(report);
         log.info("NotificationServiceImpl send: {}", report);
     }
 
-    private void sendNotification(ReportModel reportModel, Report report) {
+    private void sendMail(ReportModel reportModel, Report report) {
         mailFactory.create(reportModel).ifPresentOrElse(message -> {
             try {
                 mailSenderService.send(message);
