@@ -66,6 +66,7 @@ public class NotificationHandler implements NotificationServiceSrv.Iface {
         var validationResponse = new ValidationResponse();
         if (!CollectionUtils.isEmpty(errors)) {
             validationResponse.setErrors(errors);
+            log.info("NotificationHandler notification validation failed with errors: {}", errors);
             return validationResponse;
         }
         var notificationTemplate = notificationTemplateDao.getById((int) notification.getTemplateId());

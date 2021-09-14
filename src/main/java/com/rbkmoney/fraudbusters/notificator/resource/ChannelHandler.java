@@ -57,6 +57,7 @@ public class ChannelHandler implements ChannelServiceSrv.Iface {
         List<String> result = types.stream()
                 .map(ChannelType::getLiteral)
                 .collect(Collectors.toList());
+        log.info("ChannelHandler get all channel types: {}", result);
         return new ChannelTypeListResponse()
                 .setChannelTypes(result);
     }
