@@ -1,13 +1,15 @@
 package com.rbkmoney.fraudbusters.notificator.service.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class FilterDto {
 
+    private static final Long DEFAULT_PAGE_SIZE = 10L;
+
     private String searchFiled;
-    private PageDto page;
+    private Long size = DEFAULT_PAGE_SIZE;
+    private Long continuationId;
+    private String continuationString;
 
 }

@@ -6,7 +6,6 @@ import com.rbkmoney.fraudbusters.notificator.dao.NotificationTemplateDao;
 import com.rbkmoney.fraudbusters.notificator.resource.converter.NotificationConverter;
 import com.rbkmoney.fraudbusters.notificator.service.QueryService;
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
-import com.rbkmoney.fraudbusters.notificator.service.dto.PageDto;
 import com.rbkmoney.fraudbusters.notificator.service.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,7 @@ public class NotificationHandler implements NotificationServiceSrv.Iface {
     private final QueryService queryService;
     private final List<Validator> validators;
     private final NotificationConverter notificationConverter;
+    private final FilterConverter filterConverter;
 
     @Override
     public Notification create(Notification notification) throws TException {
@@ -81,19 +81,18 @@ public class NotificationHandler implements NotificationServiceSrv.Iface {
 
     @Override
     public NotificationListResponse getAll(Page page, Filter filter) {
-        FilterDto filterDto = FilterDto.builder()
-                .searchFiled(filter.getSearchField())
-                .page(PageDto.builder()
-                        .continuationId(page.getContinuationId())
-                        .size(page.getSize())
-                        .build())
-                .build();
+        FilterDto filterDto = filterConverter.convert(page, filter);
         var notifications = notificationDao.getAll(filterDto);
         log.info("NotificationHandler get all notifications: {}", notifications);
         List<Notification> result = notifications.stream()
                 .map(notificationConverter::toSource)
                 .collect(Collectors.toList());
-        return new NotificationListResponse()
+        NotificationListResponse notificationListResponse = new NotificationListResponse()
                 .setNotifications(result);
+        if (notifications.size() == filterDto.getSize()) {
+            var lastNotification = notifications.get(notifications.size() - 1);
+            notificationListResponse.setContinuationId(lastNotification.getId());
+        }
+        return notificationListResponse;
     }
 }

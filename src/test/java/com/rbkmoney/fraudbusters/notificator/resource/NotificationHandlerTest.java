@@ -220,4 +220,38 @@ class NotificationHandlerTest {
         assertTrue(result.getNotifications().stream().map(Notification::getName)
                 .anyMatch(s -> s.equals(notification2.getName())));
     }
+
+    @Test
+    void getAllWithFilter() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification1 = TestObjectsFactory.testNotificationRecord();
+        notification1.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
+        notification2.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
+        notification3.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification1)
+                .newRecord()
+                .set(notification2)
+                .newRecord()
+                .set(notification3)
+                .execute();
+        Page page = new Page();
+        page.setSize(2);
+
+        NotificationListResponse result = notificationHandler.getAll(page, new Filter());
+
+        assertEquals(2, result.getNotificationsSize());
+        assertTrue(result.getNotifications().stream().map(Notification::getName)
+                .anyMatch(s -> s.equals(notification1.getName())));
+        assertTrue(result.getNotifications().stream().map(Notification::getName)
+                .anyMatch(s -> s.equals(notification2.getName())));
+        var continuationNotification =
+                dslContext.selectFrom(NOTIFICATION).where(NOTIFICATION.NAME.eq(notification2.getName())).fetchOne();
+        assertEquals(continuationNotification.getId(), result.getContinuationId());
+    }
 }

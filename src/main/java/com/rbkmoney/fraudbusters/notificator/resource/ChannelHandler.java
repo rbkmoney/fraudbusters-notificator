@@ -5,7 +5,6 @@ import com.rbkmoney.fraudbusters.notificator.dao.ChannelDao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.ChannelType;
 import com.rbkmoney.fraudbusters.notificator.resource.converter.ChannelConverter;
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
-import com.rbkmoney.fraudbusters.notificator.service.dto.PageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ public class ChannelHandler implements ChannelServiceSrv.Iface {
 
     private final ChannelDao channelDao;
     private final ChannelConverter channelConverter;
+    private final FilterConverter filterConverter;
 
     @Override
     public Channel create(Channel channel) {
@@ -36,20 +36,19 @@ public class ChannelHandler implements ChannelServiceSrv.Iface {
 
     @Override
     public ChannelListResponse getAll(Page page, Filter filter) {
-        FilterDto filterDto = FilterDto.builder()
-                .searchFiled(filter.getSearchField())
-                .page(PageDto.builder()
-                        .continuationId(page.getContinuationId())
-                        .size(page.getSize())
-                        .build())
-                .build();
+        FilterDto filterDto = filterConverter.convert(page, filter);
         var channels = channelDao.getAll(filterDto);
         log.info("ChannelHandler get all channels: {}", channels);
         List<com.rbkmoney.damsel.fraudbusters_notificator.Channel> result = channels.stream()
                 .map(channelConverter::toSource)
                 .collect(Collectors.toList());
-        return new ChannelListResponse()
+        ChannelListResponse channelListResponse = new ChannelListResponse()
                 .setChannels(result);
+        if (channels.size() == filterDto.getSize()) {
+            var lastChannel = channels.get(channels.size() - 1);
+            channelListResponse.setContinuationId(lastChannel.getName());
+        }
+        return channelListResponse;
 
     }
 

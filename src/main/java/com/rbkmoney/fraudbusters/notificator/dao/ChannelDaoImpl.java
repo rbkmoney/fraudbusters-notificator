@@ -6,12 +6,15 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.ChannelRe
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.CHANNEL;
 
@@ -55,8 +58,22 @@ public class ChannelDaoImpl extends AbstractDao implements ChannelDao {
 
     @Override
     public List<Channel> getAll(FilterDto filter) {
-        return fetch(getDslContext()
-                .selectFrom(CHANNEL), listRecordRowMapper);
+        String likeExpression = SqlFilterUtils.prepareSearchField(filter.getSearchFiled());
+        SelectWhereStep<ChannelRecord> select = getDslContext()
+                .selectFrom(CHANNEL);
+        Condition condition = DSL.noCondition();
+        if (Objects.nonNull(filter.getContinuationString())) {
+            condition = condition.and(CHANNEL.NAME.gt(filter.getContinuationString()));
+        }
+        if (StringUtils.hasLength(likeExpression)) {
+            condition = condition.and(CHANNEL.NAME.likeIgnoreCase(likeExpression)
+                    .or(CHANNEL.DESTINATION.likeIgnoreCase(likeExpression)));
+        }
+        SelectForUpdateStep<ChannelRecord> query = select
+                .where(condition)
+                .orderBy(CHANNEL.NAME)
+                .limit(filter.getSize());
+        return fetch(query, listRecordRowMapper);
     }
 
     @Override

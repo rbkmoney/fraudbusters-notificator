@@ -63,6 +63,32 @@ class ChannelHandlerTest {
     }
 
     @Test
+    void getAllWithFilter() {
+        ChannelRecord channel1 = TestObjectsFactory.testChannelRecord();
+        channel1.setName("a");
+        ChannelRecord channel2 = TestObjectsFactory.testChannelRecord();
+        channel2.setName("b");
+        ChannelRecord channel3 = TestObjectsFactory.testChannelRecord();
+        channel3.setName("c");
+        dslContext.insertInto(CHANNEL)
+                .set(channel1)
+                .newRecord()
+                .set(channel2)
+                .newRecord()
+                .set(channel3)
+                .execute();
+
+        Page page = new Page();
+        page.setSize(2L);
+        ChannelListResponse result = channelHandler.getAll(page, new Filter());
+
+        assertEquals(2, result.getChannelsSize());
+        assertTrue(result.getChannels().stream().map(Channel::getName).anyMatch(s -> s.equals(channel1.getName())));
+        assertTrue(result.getChannels().stream().map(Channel::getName).anyMatch(s -> s.equals(channel2.getName())));
+        assertEquals(channel2.getName(), result.getContinuationId());
+    }
+
+    @Test
     void getAllTypes() {
         ChannelRecord channel1 = TestObjectsFactory.testChannelRecord();
         dslContext.insertInto(CHANNEL)
