@@ -48,7 +48,7 @@ public class QueryProcessorImplTest {
 
     @BeforeEach
     void setUp() {
-        dslContext.delete(NOTIFICATION).execute();
+        dslContext.deleteFrom(NOTIFICATION).execute();
     }
 
     @Test

@@ -24,7 +24,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void send(ReportModel reportModel) {
-        log.info("NotificationProcessorImpl start sentNotification!");
+        log.info("NotificationServiceImpl start send notification");
         Report report = reportModel.getCurrentReport();
         if (!changeQueryResultFilter.test(reportModel)) {
             report.setStatus(ReportStatus.skipped);

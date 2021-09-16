@@ -3,6 +3,7 @@ package com.rbkmoney.fraudbusters.notificator.dao;
 
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
+import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 
 import java.util.List;
 
@@ -16,6 +17,6 @@ public interface NotificationDao {
 
     List<Notification> getByStatus(NotificationStatus status);
 
-    List<Notification> getAll();
+    List<Notification> getAll(FilterDto filter);
 
 }

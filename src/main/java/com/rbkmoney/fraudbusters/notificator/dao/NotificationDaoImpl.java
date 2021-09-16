@@ -3,18 +3,18 @@ package com.rbkmoney.fraudbusters.notificator.dao;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.enums.NotificationStatus;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
+import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import com.rbkmoney.mapper.RecordRowMapper;
-import org.jooq.DeleteConditionStep;
-import org.jooq.Query;
-import org.jooq.SelectConditionStep;
-import org.jooq.SelectWhereStep;
+import org.jooq.*;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION;
 
@@ -68,10 +68,25 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
     }
 
     @Override
-    public List<Notification> getAll() {
-        SelectWhereStep<NotificationRecord> notificationRecords = getDslContext()
+    public List<Notification> getAll(FilterDto filter) {
+        String likeExpression = SqlFilterUtils.prepareSearchField(filter.getSearchFiled());
+        SelectWhereStep<NotificationRecord> select = getDslContext()
                 .selectFrom(NOTIFICATION);
-        return fetch(notificationRecords, listRecordRowMapper);
+        SelectConnectByStep<NotificationRecord> where =
+                StringUtils.hasLength(likeExpression)
+                        ? select.where(NOTIFICATION.NAME.likeIgnoreCase(likeExpression)
+                        .or(NOTIFICATION.SUBJECT.likeIgnoreCase(likeExpression))
+                        .or(NOTIFICATION.CHANNEL.likeIgnoreCase(likeExpression)))
+                        : select;
+        SelectForUpdateStep<NotificationRecord> query =
+                Objects.nonNull(filter.getContinuationId())
+                        ? where.orderBy(NOTIFICATION.ID)
+                        .offset(filter.getContinuationId())
+                        .limit(filter.getSize())
+                        : where.orderBy(NOTIFICATION.ID)
+                        .limit(filter.getSize());
+        return fetch(query, listRecordRowMapper);
     }
+
 
 }

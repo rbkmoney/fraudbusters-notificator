@@ -2,6 +2,7 @@ package com.rbkmoney.fraudbusters.notificator.service.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.fraudbusters.notificator.TestObjectsFactory;
+import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Report;
 import com.rbkmoney.fraudbusters.notificator.domain.ReportModel;
 import com.rbkmoney.fraudbusters.notificator.serializer.QueryResultSerde;
@@ -28,7 +29,7 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification())
+                .notification(new Notification())
                 .notificationTemplate(TestObjectsFactory.testNotificationTemplate("shopId,currency"))
                 .build());
 
@@ -50,7 +51,7 @@ public class ChangeQueryResultFilterTest {
         boolean test = changeQueryResultFilter.test(ReportModel.builder()
                 .lastReport(lastReport)
                 .currentReport(currentReport)
-                .notification(TestObjectsFactory.testNotification())
+                .notification(new Notification())
                 .notificationTemplate(TestObjectsFactory.testNotificationTemplate("shopId,currency"))
                 .build());
 

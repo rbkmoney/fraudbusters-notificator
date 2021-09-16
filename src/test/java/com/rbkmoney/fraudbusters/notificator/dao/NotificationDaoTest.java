@@ -5,6 +5,7 @@ import com.rbkmoney.fraudbusters.notificator.config.PostgresqlSpringBootITest;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationRecord;
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
+import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ public class NotificationDaoTest {
 
     @BeforeEach
     void setUp() {
-        dslContext.delete(NOTIFICATION).execute();
+        dslContext.deleteFrom(NOTIFICATION).execute();
     }
 
     @Test
@@ -41,7 +42,7 @@ public class NotificationDaoTest {
                 .set(TestObjectsFactory.testNotificationTemplateRecord())
                 .execute();
         NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
-        Notification notification = TestObjectsFactory.testNotification();
+        Notification notification = TestObjectsFactory.testTableNotification();
         notification.setTemplateId(savedNotificationTemplate.getId());
 
         Notification savedNotification = notificationDao.insert(notification);
@@ -149,7 +150,115 @@ public class NotificationDaoTest {
                 .set(notification2)
                 .execute();
 
-        List<Notification> all = notificationDao.getAll();
+        List<Notification> all = notificationDao.getAll(new FilterDto());
+
+        assertEquals(2, all.size());
+        assertIterableEquals(List.of(notification1.getName(), notification2.getName()),
+                all.stream()
+                        .map(Notification::getName)
+                        .collect(Collectors.toList()));
+
+    }
+
+    @Test
+    void testGetAllWithFilterContinuationId() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification1 = TestObjectsFactory.testNotificationRecord();
+        notification1.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
+        notification2.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
+        notification3.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification1)
+                .newRecord()
+                .set(notification2)
+                .newRecord()
+                .set(notification3)
+                .execute();
+
+        FilterDto filter = new FilterDto();
+        filter.setContinuationId(1L);
+        List<Notification> all = notificationDao.getAll(filter);
+
+        assertEquals(2, all.size());
+        assertIterableEquals(List.of(notification2.getName(), notification3.getName()),
+                all.stream()
+                        .map(Notification::getName)
+                        .collect(Collectors.toList()));
+
+    }
+
+    @Test
+    void testGetAllWithFilterSearchField() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification1 = TestObjectsFactory.testNotificationRecord();
+        notification1.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
+        notification2.setTemplateId(savedNotificationTemplate.getId());
+        notification2.setName(notification1.getName() + notification2.getName());
+        NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
+        notification3.setTemplateId(savedNotificationTemplate.getId());
+        notification3.setName(notification3.getName() + notification1.getName());
+        NotificationRecord notification4 = TestObjectsFactory.testNotificationRecord();
+        notification4.setTemplateId(savedNotificationTemplate.getId());
+        notification4.setName(notification4.getName() + notification1.getName() + notification4.getName());
+        NotificationRecord notification5 = TestObjectsFactory.testNotificationRecord();
+        notification5.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification1)
+                .newRecord()
+                .set(notification2)
+                .newRecord()
+                .set(notification3)
+                .newRecord()
+                .set(notification4)
+                .newRecord()
+                .set(notification5)
+                .execute();
+
+        FilterDto filter = new FilterDto();
+        filter.setSearchFiled(notification1.getName());
+        List<Notification> all = notificationDao.getAll(filter);
+
+        assertEquals(4, all.size());
+        assertIterableEquals(List.of(notification1.getSubject(), notification2.getSubject(), notification3.getSubject(),
+                notification4.getSubject()),
+                all.stream()
+                        .map(Notification::getSubject)
+                        .collect(Collectors.toList()));
+
+    }
+
+    @Test
+    void testGetAllWithFilterSize() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification1 = TestObjectsFactory.testNotificationRecord();
+        notification1.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
+        notification2.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
+        notification3.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification1)
+                .newRecord()
+                .set(notification2)
+                .newRecord()
+                .set(notification3)
+                .execute();
+
+        FilterDto filter = new FilterDto();
+        filter.setSize(2L);
+        List<Notification> all = notificationDao.getAll(filter);
 
         assertEquals(2, all.size());
         assertIterableEquals(List.of(notification1.getName(), notification2.getName()),

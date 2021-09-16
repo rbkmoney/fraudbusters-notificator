@@ -1,7 +1,6 @@
 package com.rbkmoney.fraudbusters.notificator.service.validator;
 
-import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notification;
-import com.rbkmoney.fraudbusters.notificator.domain.ValidationError;
+import com.rbkmoney.damsel.fraudbusters_notificator.Notification;
 import com.rbkmoney.fraudbusters.notificator.parser.PeriodParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,34 +15,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FieldValidator implements Validator {
 
-    public static final String EMPTY_REQUIRED_FIELD_PERIOD = "Empty required field period!";
     private final PeriodParser periodParser;
 
     @Override
-    public List<ValidationError> validate(Notification notification) {
-        List<ValidationError> validationErrors = new ArrayList<>();
+    public List<String> validate(Notification notification) {
+        List<String> validationErrors = new ArrayList<>();
         if (!StringUtils.hasLength(notification.getPeriod())) {
-            log.warn(EMPTY_REQUIRED_FIELD_PERIOD);
-            validationErrors.add(new ValidationError(EMPTY_REQUIRED_FIELD_PERIOD));
+            log.warn("Empty required field period");
+            validationErrors.add("Empty required field period");
         } else if (periodParser.parse(notification.getPeriod()) == 0L) {
-            log.warn("Unknown period value!");
-            validationErrors.add(new ValidationError("Unknown period value: " + notification.getPeriod()));
+            log.warn("Unknown period value");
+            validationErrors.add("Unknown period value: " + notification.getPeriod());
         }
 
-        validateField(validationErrors, notification.getName(), "Empty name!", "Name is required!");
-        validateField(validationErrors, notification.getChannel(), "Empty channel!", "Channel is required!");
-        validateField(validationErrors, notification.getFrequency(), "Empty frequency!", "frequency  is required!");
+        validateField(validationErrors, notification.getName(), "Empty name", "Name is required");
+        validateField(validationErrors, notification.getChannel(), "Empty channel", "Channel is required");
+        validateField(validationErrors, notification.getFrequency(), "Empty frequency", "frequency  is required");
 
         return validationErrors;
     }
 
-    private void validateField(List<ValidationError> validationErrors,
+    private void validateField(List<String> validationErrors,
                                String field,
-                               String log,
+                               String logMessage,
                                String errorMessage) {
         if (!StringUtils.hasLength(field)) {
-            FieldValidator.log.warn(log);
-            validationErrors.add(new ValidationError(errorMessage));
+            log.warn(logMessage);
+            validationErrors.add(errorMessage);
         }
     }
 }

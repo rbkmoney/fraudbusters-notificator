@@ -4,10 +4,13 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.pojos.Notificatio
 import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.NotificationTemplateRecord;
 import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectWhereStep;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+
+import java.util.List;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.NOTIFICATION_TEMPLATE;
 
@@ -27,5 +30,12 @@ public class NotificationTemplateDaoImpl extends AbstractDao implements Notifica
                 .selectFrom(NOTIFICATION_TEMPLATE)
                 .where(NOTIFICATION_TEMPLATE.ID.eq(id));
         return fetchOne(where, listRecordRowMapper);
+    }
+
+    @Override
+    public List<NotificationTemplate> getAll() {
+        SelectWhereStep<NotificationTemplateRecord> notificationTemplateRecords = getDslContext()
+                .selectFrom(NOTIFICATION_TEMPLATE);
+        return fetch(notificationTemplateRecords, listRecordRowMapper);
     }
 }
