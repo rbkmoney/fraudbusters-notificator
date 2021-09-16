@@ -15,15 +15,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FieldValidator implements Validator {
 
-    public static final String EMPTY_REQUIRED_FIELD_PERIOD = "Empty required field period";
     private final PeriodParser periodParser;
 
     @Override
     public List<String> validate(Notification notification) {
         List<String> validationErrors = new ArrayList<>();
         if (!StringUtils.hasLength(notification.getPeriod())) {
-            log.warn(EMPTY_REQUIRED_FIELD_PERIOD);
-            validationErrors.add(EMPTY_REQUIRED_FIELD_PERIOD);
+            log.warn("Empty required field period");
+            validationErrors.add("Empty required field period");
         } else if (periodParser.parse(notification.getPeriod()) == 0L) {
             log.warn("Unknown period value");
             validationErrors.add("Unknown period value: " + notification.getPeriod());

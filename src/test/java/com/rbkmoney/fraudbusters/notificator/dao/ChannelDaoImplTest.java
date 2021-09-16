@@ -77,21 +77,34 @@ class ChannelDaoImplTest {
     void getAllWithFilterSearchField() {
         ChannelRecord channel1 = TestObjectsFactory.testChannelRecord();
         ChannelRecord channel2 = TestObjectsFactory.testChannelRecord();
+        channel2.setName(channel1.getName() + channel2.getName());
         ChannelRecord channel3 = TestObjectsFactory.testChannelRecord();
+        channel3.setName(channel3.getName() + channel1.getName());
+        ChannelRecord channel4 = TestObjectsFactory.testChannelRecord();
+        channel4.setName(channel4.getName() + channel1.getName() + channel4.getName());
+        ChannelRecord channel5 = TestObjectsFactory.testChannelRecord();
         dslContext.insertInto(CHANNEL)
                 .set(channel1)
                 .newRecord()
                 .set(channel2)
                 .newRecord()
                 .set(channel3)
+                .newRecord()
+                .set(channel4)
+                .newRecord()
+                .set(channel5)
                 .execute();
 
         FilterDto filter = new FilterDto();
         filter.setSearchFiled(channel1.getName());
         List<Channel> all = channelDao.getAll(filter);
 
-        assertEquals(1, all.size());
-        assertEquals(channel1.getDestination(), all.get(0).getDestination());
+        assertEquals(4, all.size());
+        assertIterableEquals(List.of(channel1.getDestination(), channel2.getDestination(), channel3.getDestination(),
+                channel4.getDestination()),
+                all.stream()
+                        .map(Channel::getDestination)
+                        .collect(Collectors.toList()));
     }
 
     @Test

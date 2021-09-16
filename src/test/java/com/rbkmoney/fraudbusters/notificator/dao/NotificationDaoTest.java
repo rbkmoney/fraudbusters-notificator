@@ -202,22 +202,37 @@ public class NotificationDaoTest {
         notification1.setTemplateId(savedNotificationTemplate.getId());
         NotificationRecord notification2 = TestObjectsFactory.testNotificationRecord();
         notification2.setTemplateId(savedNotificationTemplate.getId());
+        notification2.setName(notification1.getName() + notification2.getName());
         NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
         notification3.setTemplateId(savedNotificationTemplate.getId());
+        notification3.setName(notification3.getName() + notification1.getName());
+        NotificationRecord notification4 = TestObjectsFactory.testNotificationRecord();
+        notification4.setTemplateId(savedNotificationTemplate.getId());
+        notification4.setName(notification4.getName() + notification1.getName() + notification4.getName());
+        NotificationRecord notification5 = TestObjectsFactory.testNotificationRecord();
+        notification5.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification1)
                 .newRecord()
                 .set(notification2)
                 .newRecord()
                 .set(notification3)
+                .newRecord()
+                .set(notification4)
+                .newRecord()
+                .set(notification5)
                 .execute();
 
         FilterDto filter = new FilterDto();
-        filter.setSearchFiled(notification2.getName());
+        filter.setSearchFiled(notification1.getName());
         List<Notification> all = notificationDao.getAll(filter);
 
-        assertEquals(1, all.size());
-        assertEquals(notification2.getSubject(), all.get(0).getSubject());
+        assertEquals(4, all.size());
+        assertIterableEquals(List.of(notification1.getSubject(), notification2.getSubject(), notification3.getSubject(),
+                notification4.getSubject()),
+                all.stream()
+                        .map(Notification::getSubject)
+                        .collect(Collectors.toList()));
 
     }
 
