@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.rbkmoney.fraudbusters.notificator.dao.domain.Tables.CHANNEL;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -40,10 +42,10 @@ class ChannelDaoImplTest {
         List<Channel> all = channelDao.getAll(new FilterDto());
 
         assertEquals(2, all.size());
-        assertIterableEquals(List.of(channel1.getName(), channel2.getName()),
-                all.stream()
-                        .map(Channel::getName)
-                        .collect(Collectors.toList()));
+        List<String> names = all.stream()
+                .map(Channel::getName)
+                .collect(Collectors.toList());
+        assertThat(names, hasItems(channel1.getName(), channel2.getName()));
     }
 
     @Test
