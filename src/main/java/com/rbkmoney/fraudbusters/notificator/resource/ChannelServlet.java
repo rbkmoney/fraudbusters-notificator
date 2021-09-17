@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
 
 import java.io.IOException;
 
-@WebServlet("notification-channel/v1")
+@WebServlet("/notification-channel/v1")
 @RequiredArgsConstructor
 public class ChannelServlet extends GenericServlet {
 

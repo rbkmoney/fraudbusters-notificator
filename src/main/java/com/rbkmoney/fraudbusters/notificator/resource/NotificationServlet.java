@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
 
 import java.io.IOException;
 
-@WebServlet("notification/v1")
+@WebServlet("/notification/v1")
 @RequiredArgsConstructor
 public class NotificationServlet extends GenericServlet {
 
