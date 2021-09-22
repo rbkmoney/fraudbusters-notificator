@@ -29,10 +29,10 @@ import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @PostgresqlSpringBootITest
-public class QueryProcessorImplTest {
+public class NotificationProcessorImplTest {
 
     @Autowired
-    QueryProcessorImpl queryProcessor;
+    NotificationProcessorImpl notificationProcessor;
 
     @Autowired
     private DSLContext dslContext;
@@ -76,7 +76,7 @@ public class QueryProcessorImplTest {
         when(queryService.query(anyString()))
                 .thenReturn(List.of(Map.of("shopId", shopId)));
 
-        queryProcessor.process();
+        notificationProcessor.process();
 
         List<ReportRecord> notificationByStatus = dslContext
                 .selectFrom(REPORT)
@@ -88,7 +88,7 @@ public class QueryProcessorImplTest {
         QueryResult queryResult = objectMapper.readValue(result, QueryResult.class);
         assertEquals(shopId, queryResult.getResults().get(0).get("shopId"));
 
-        queryProcessor.process();
+        notificationProcessor.process();
 
         notificationByStatus = dslContext
                 .selectFrom(REPORT)
@@ -99,7 +99,7 @@ public class QueryProcessorImplTest {
 
         Thread.sleep(1000L);
 
-        queryProcessor.process();
+        notificationProcessor.process();
 
         notificationByStatus = dslContext
                 .selectFrom(REPORT)

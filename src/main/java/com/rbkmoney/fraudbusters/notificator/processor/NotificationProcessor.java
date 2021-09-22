@@ -1,6 +1,6 @@
 package com.rbkmoney.fraudbusters.notificator.processor;
 
-public interface QueryProcessor {
+public interface NotificationProcessor {
 
     void process();
 
