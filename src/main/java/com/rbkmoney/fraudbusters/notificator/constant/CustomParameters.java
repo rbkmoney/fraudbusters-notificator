@@ -1,5 +1,9 @@
 package com.rbkmoney.fraudbusters.notificator.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomParameters {
 
     public static final String CURRENT_DATE_TIME = "currentDateTime";

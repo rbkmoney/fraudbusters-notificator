@@ -6,7 +6,7 @@ import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FilterConverter {
+class FilterConverter {
 
     public FilterDto convert(Page page, Filter filter) {
         FilterDto filterDto = new FilterDto();

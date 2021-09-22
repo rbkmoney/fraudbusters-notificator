@@ -20,10 +20,7 @@ public class QueryService {
     private final WarehouseQueryService warehouseQueryService;
 
     public List<Map<String, String>> query(String statement) {
-        Map<String, String> params = queryPrepareService.prepare();
-        Query query = new Query();
-        query.setParams(params);
-        query.setStatement(statement);
+        Query query = buildQuery(statement);
         Result result = warehouseQueryService.execute(query);
         if (!result.isSetValues()) {
             return Collections.emptyList();
@@ -31,6 +28,14 @@ public class QueryService {
         return result.getValues().stream()
                 .map(Row::getValues)
                 .collect(Collectors.toList());
+    }
+
+    private Query buildQuery(String statement) {
+        Map<String, String> params = queryPrepareService.prepare();
+        Query query = new Query();
+        query.setParams(params);
+        query.setStatement(statement);
+        return query;
     }
 
 }

@@ -58,12 +58,12 @@ public class NotificationProcessorImpl implements NotificationProcessor {
     }
 
     private ReportModel initReportModel(final Notification notification) {
-        Report lastByNotification = reportNotificationDao.getLastSendById(notification.getId());
+        Report lastReportByNotification = reportNotificationDao.getLastSendById(notification.getId());
         NotificationTemplate notificationTemplate = notificationTemplateDao.getById(notification.getTemplateId());
         return ReportModel.builder()
                 .notification(notification)
                 .notificationTemplate(notificationTemplate)
-                .lastReport(lastByNotification)
+                .lastReport(lastReportByNotification)
                 .build();
     }
 
@@ -77,8 +77,8 @@ public class NotificationProcessorImpl implements NotificationProcessor {
             currentReport.setResult(queryResultSerde.serialize(queryResult));
             currentReport.setCreatedAt(LocalDateTime.now());
             currentReport.setStatus(ReportStatus.created);
-            Optional<Long> insert = reportNotificationDao.insert(currentReport);
-            insert.ifPresent(currentReport::setId);
+            Optional<Long> currentReportId = reportNotificationDao.insert(currentReport);
+            currentReportId.ifPresent(currentReport::setId);
             log.info("NotificationProcessorImpl enrichByCurrentReport notification: {} template: {} result: {}",
                     notification,
                     notificationTemplate, queryResult);
