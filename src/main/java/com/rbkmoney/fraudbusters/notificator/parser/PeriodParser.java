@@ -6,18 +6,13 @@ import org.springframework.stereotype.Service;
 public class PeriodParser {
 
     public Long parse(String period) {
-        switch (period) {
-            case "1s":
-                return 1000L;
-            case "1m":
-                return 60 * 1000L;
-            case "1h":
-                return 60 * 60 * 1000L;
-            case "1d":
-                return 24 * 60 * 60 * 1000L;
-            default:
-                return 0L;
-        }
+        return switch (period) {
+            case "1s" -> 1000L;
+            case "1m" -> 60 * 1000L;
+            case "1h" -> 60 * 60 * 1000L;
+            case "1d" -> 24 * 60 * 60 * 1000L;
+            default -> 0L;
+        };
     }
 
 }

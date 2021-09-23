@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class QueryProcessorImpl implements QueryProcessor {
+public class NotificationProcessorImpl implements NotificationProcessor {
 
     private final NotificationDao notificationDao;
     private final ReportNotificationDao reportNotificationDao;
@@ -42,31 +42,32 @@ public class QueryProcessorImpl implements QueryProcessor {
     @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
     @SchedulerLock(name = "TaskScheduler_invoke_process")
     public void process() {
-        log.info("QueryProcessorImpl start process!");
+        log.info("NotificationProcessorImpl start process");
         List<Notification> activeNotifications = notificationDao.getByStatus(NotificationStatus.ACTIVE);
-        log.info("QueryProcessorImpl active notifications: {}", activeNotifications);
+        log.info("NotificationProcessorImpl active notifications: {}", activeNotifications);
         if (!CollectionUtils.isEmpty(activeNotifications)) {
             activeNotifications.stream()
                     .map(this::initReportModel)
                     .filter(readyForNotifyFilter)
-                    .map(this::queryForNotify)
+                    .map(this::enrichByCurrentReport)
                     .filter(Optional::isPresent)
-                    .forEach(reportModel -> notificationService.send(reportModel.get()));
+                    .map(Optional::get)
+                    .forEach(notificationService::send);
         }
-        log.info("QueryProcessorImpl finished process!");
+        log.info("NotificationProcessorImpl finished process");
     }
 
     private ReportModel initReportModel(final Notification notification) {
-        Report lastByNotification = reportNotificationDao.getLastSendById(notification.getId());
+        Report lastReportByNotification = reportNotificationDao.getLastSendById(notification.getId());
         NotificationTemplate notificationTemplate = notificationTemplateDao.getById(notification.getTemplateId());
         return ReportModel.builder()
                 .notification(notification)
                 .notificationTemplate(notificationTemplate)
-                .lastReport(lastByNotification)
+                .lastReport(lastReportByNotification)
                 .build();
     }
 
-    private Optional<ReportModel> queryForNotify(final ReportModel reportModel) {
+    private Optional<ReportModel> enrichByCurrentReport(final ReportModel reportModel) {
         Notification notification = reportModel.getNotification();
         NotificationTemplate notificationTemplate = reportModel.getNotificationTemplate();
         try {
@@ -76,18 +77,16 @@ public class QueryProcessorImpl implements QueryProcessor {
             currentReport.setResult(queryResultSerde.serialize(queryResult));
             currentReport.setCreatedAt(LocalDateTime.now());
             currentReport.setStatus(ReportStatus.created);
-            Optional<Long> insert = reportNotificationDao.insert(currentReport);
-            insert.ifPresent(currentReport::setId);
-            log.info("QueryProcessorImpl queryForNotify notification: {} template: {} result: {}", notification,
+            Optional<Long> currentReportId = reportNotificationDao.insert(currentReport);
+            currentReportId.ifPresent(currentReport::setId);
+            log.info("NotificationProcessorImpl enrichByCurrentReport notification: {} template: {} result: {}",
+                    notification,
                     notificationTemplate, queryResult);
-            return Optional.of(ReportModel.builder()
-                    .notification(notification)
-                    .notificationTemplate(notificationTemplate)
-                    .lastReport(reportModel.getLastReport())
-                    .currentReport(currentReport)
-                    .build());
+            reportModel.setCurrentReport(currentReport);
+            return Optional.of(reportModel);
         } catch (Exception e) {
-            log.error("NotificationProcessorImpl error when queryForNotify for notification: {} template: {} e: ",
+            log.error(
+                    "NotificationProcessorImpl error when enrichByCurrentReport for notification: {} template: {} e: ",
                     notification, notificationTemplate, e);
         }
         return Optional.empty();
