@@ -1,36 +1,23 @@
 # fraudbusters-notificator
 
-```
- {
-    select: "",
+fraudbusters-notificator - сервис предназначен для работы с оповещениями антифрода (Fraudbusters).
 
-    period: "1d",
+В функции сервиса входит:
 
-    paramters: [{
-            name: "",
-            type: ""
-        }],
+- управление оповещаниями - добавление, изменение, удаление (CRUD)
 
-    form: {
-        type: "",
-        value: ""
-    }
+- управление каналами передачи опопвещаний
 
-    frequency: "1m",
+- рассылка настроенных оповещений по выбранным каналам
 
-    alertChanel: ""
- }
-```
+## Описание работы сервиса
 
-Date parameters: 
+Сервис предоставляет возможность гибко настраивать оповешения и осуществлять их запланированную отправку по различным
+каналам. Для работы с оповещениями необходимо перейти в раздел "Notifications"
+системы Fraudbusters.
 
-```
+Общая схема взаимодействия:
 
-$currentDate
+![fb-notificator.svg](doc/fb-notificator.svg)
 
-$currentMonth
-
-$currentYear
-
-
-```
+Протокол взаимодействия описан [тут](https://github.com/rbkmoney/fraudbusters-notificator-proto).
