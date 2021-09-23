@@ -82,12 +82,8 @@ public class NotificationProcessorImpl implements NotificationProcessor {
             log.info("NotificationProcessorImpl enrichByCurrentReport notification: {} template: {} result: {}",
                     notification,
                     notificationTemplate, queryResult);
-            return Optional.of(ReportModel.builder()
-                    .notification(notification)
-                    .notificationTemplate(notificationTemplate)
-                    .lastReport(reportModel.getLastReport())
-                    .currentReport(currentReport)
-                    .build());
+            reportModel.setCurrentReport(currentReport);
+            return Optional.of(reportModel);
         } catch (Exception e) {
             log.error(
                     "NotificationProcessorImpl error when enrichByCurrentReport for notification: {} template: {} e: ",

@@ -1,8 +1,5 @@
 server:
   port: '@server.port@'
-  rest:
-    port: '@server.rest.port@'
-    endpoints: notifications, channels, reports
 management:
   security:
     flag: false
@@ -67,14 +64,6 @@ mail:
     from-address: "NotificationService@rbkmoney.com"
     starttls:
       enable: true
----
-swagger:
-  paths: |
-    /swagger-ui.html,
-    /webjars/springfox-swagger-ui/**/*,
-    /swagger-resources,
-    /swagger-resources/**/*,
-    /v2/api-docs
 ---
 fixedDelay:
   in:
