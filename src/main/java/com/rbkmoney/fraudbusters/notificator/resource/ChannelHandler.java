@@ -62,4 +62,11 @@ public class ChannelHandler implements ChannelServiceSrv.Iface {
         return new ChannelTypeListResponse()
                 .setChannelTypes(result);
     }
+
+    @Override
+    public Channel getById(String name) {
+        var channel = channelDao.getByName(name);
+        log.info("ChannelHandler get channel by id {} channel: {}", name, channel);
+        return channelConverter.toSource(channel);
+    }
 }

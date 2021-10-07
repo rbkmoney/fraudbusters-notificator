@@ -95,4 +95,11 @@ public class NotificationHandler implements NotificationServiceSrv.Iface {
         }
         return notificationListResponse;
     }
+
+    @Override
+    public Notification getById(long id) {
+        var notification = notificationDao.getById(id);
+        log.info("NotificationHandler get notification by Id {} notification: {}", id, notification);
+        return notificationConverter.toSource(notification);
+    }
 }
