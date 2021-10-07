@@ -6,6 +6,7 @@ import com.rbkmoney.fraudbusters.notificator.dao.domain.tables.records.Notificat
 import com.rbkmoney.fraudbusters.notificator.service.dto.FilterDto;
 import com.rbkmoney.mapper.RecordRowMapper;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
@@ -77,13 +78,12 @@ public class NotificationDaoImpl extends AbstractDao implements NotificationDao 
                         ? select.where(NOTIFICATION.NAME.likeIgnoreCase(likeExpression)
                         .or(NOTIFICATION.SUBJECT.likeIgnoreCase(likeExpression))
                         .or(NOTIFICATION.CHANNEL.likeIgnoreCase(likeExpression)))
-                        : select;
+                        : select
+                        .where(Objects.nonNull(filter.getContinuationId())
+                                ? NOTIFICATION.ID.greaterThan(filter.getContinuationId())
+                                : DSL.noCondition());
         SelectForUpdateStep<NotificationRecord> query =
-                Objects.nonNull(filter.getContinuationId())
-                        ? where.orderBy(NOTIFICATION.ID)
-                        .offset(filter.getContinuationId())
-                        .limit(filter.getSize())
-                        : where.orderBy(NOTIFICATION.ID)
+                where.orderBy(NOTIFICATION.ID)
                         .limit(filter.getSize());
         return fetch(query, listRecordRowMapper);
     }

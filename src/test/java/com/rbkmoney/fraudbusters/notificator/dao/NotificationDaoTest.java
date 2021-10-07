@@ -172,20 +172,26 @@ public class NotificationDaoTest {
         notification2.setTemplateId(savedNotificationTemplate.getId());
         NotificationRecord notification3 = TestObjectsFactory.testNotificationRecord();
         notification3.setTemplateId(savedNotificationTemplate.getId());
+        NotificationRecord notification4 = TestObjectsFactory.testNotificationRecord();
+        notification4.setTemplateId(savedNotificationTemplate.getId());
         dslContext.insertInto(NOTIFICATION)
                 .set(notification1)
                 .newRecord()
                 .set(notification2)
                 .newRecord()
                 .set(notification3)
+                .newRecord()
+                .set(notification4)
                 .execute();
 
+        Result<NotificationRecord> savedNotifications = dslContext.fetch(NOTIFICATION);
+
         FilterDto filter = new FilterDto();
-        filter.setContinuationId(1L);
+        filter.setContinuationId(savedNotifications.get(1).getId());
         List<Notification> all = notificationDao.getAll(filter);
 
         assertEquals(2, all.size());
-        assertIterableEquals(List.of(notification2.getName(), notification3.getName()),
+        assertIterableEquals(List.of(notification3.getName(), notification4.getName()),
                 all.stream()
                         .map(Notification::getName)
                         .collect(Collectors.toList()));
