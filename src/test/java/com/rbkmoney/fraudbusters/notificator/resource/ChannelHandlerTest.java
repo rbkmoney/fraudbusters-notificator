@@ -99,4 +99,17 @@ class ChannelHandlerTest {
         assertEquals(1, result.getChannelTypesSize());
         assertEquals(channel1.getType().getLiteral(), result.getChannelTypes().get(0));
     }
+
+    @Test
+    void getByID() {
+        ChannelRecord channel = TestObjectsFactory.testChannelRecord();
+        dslContext.insertInto(CHANNEL)
+                .set(channel)
+                .execute();
+
+        Channel result = channelHandler.getById(channel.getName());
+
+        assertEquals(channel.getName(), result.getName());
+        assertEquals(channel.getDestination(), result.getDestination());
+    }
 }

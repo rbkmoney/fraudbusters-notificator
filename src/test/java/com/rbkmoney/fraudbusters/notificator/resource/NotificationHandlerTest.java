@@ -254,4 +254,26 @@ class NotificationHandlerTest {
                 dslContext.selectFrom(NOTIFICATION).where(NOTIFICATION.NAME.eq(notification2.getName())).fetchOne();
         assertEquals(continuationNotification.getId(), result.getContinuationId());
     }
+
+    @Test
+    void getById() {
+        dslContext.insertInto(NOTIFICATION_TEMPLATE)
+                .set(TestObjectsFactory.testNotificationTemplateRecord())
+                .execute();
+        NotificationTemplateRecord savedNotificationTemplate = dslContext.fetchAny(NOTIFICATION_TEMPLATE);
+        NotificationRecord notification = TestObjectsFactory.testNotificationRecord();
+        notification.setTemplateId(savedNotificationTemplate.getId());
+        dslContext.insertInto(NOTIFICATION)
+                .set(notification)
+                .execute();
+
+        NotificationRecord savedNotification = dslContext.fetchOne(NOTIFICATION);
+
+        Notification result = notificationHandler.getById(savedNotification.getId());
+
+        assertEquals(notification.getName(), result.getName());
+        assertEquals(notification.getSubject(), result.getSubject());
+        assertEquals(savedNotification.getId(), result.getId());
+        assertEquals(notification.getChannel(), result.getChannel());
+    }
 }
