@@ -37,7 +37,7 @@ UPDATE
     fb_notificator.notification_template
 set query_text = 'SELECT partyId, count() AS cnt ' ||
                  'FROM fraud.chargeback ' ||
-                 'WHERE toDateTime(eventTime) >= toDateTime(substring(:currentDateTime, 1, length(:currentDateTime) - 7)) - INTERVAL 5 MINUTE AND status = ''accepted'' AND partyId==''f42723d0-2022-4b66-9f92-4549769f1a92'' ' ||
+                 'WHERE toDateTime(eventTime) >= toDateTime(:currentDateTime) - INTERVAL 5 MINUTE AND status = ''accepted'' AND partyId==''f42723d0-2022-4b66-9f92-4549769f1a92'' ' ||
                  'GROUP BY partyId ' ||
                  'HAVING cnt > 3'
 where id = 8;
