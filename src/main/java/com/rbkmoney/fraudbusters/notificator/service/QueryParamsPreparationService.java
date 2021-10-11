@@ -1,6 +1,7 @@
 package com.rbkmoney.fraudbusters.notificator.service;
 
 import com.rbkmoney.fraudbusters.notificator.constant.CustomParameters;
+import com.rbkmoney.fraudbusters.notificator.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 
 @Service
@@ -18,7 +18,7 @@ public class QueryParamsPreparationService {
     public Map<String, String> prepare() {
         LocalDateTime now = LocalDateTime.now();
         String currentDate = now.format(ISO_DATE);
-        String currentDateTime = now.format(ISO_DATE_TIME);
+        String currentDateTime = DateUtils.timeToString(now);
         String currentMonth = String.valueOf(now.getMonth().getValue());
         String currentYear = String.valueOf(now.getYear());
         return Map.of(CustomParameters.CURRENT_DATE_TIME, currentDateTime,

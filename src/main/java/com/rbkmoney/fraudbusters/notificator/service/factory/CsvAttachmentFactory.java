@@ -1,9 +1,9 @@
 package com.rbkmoney.fraudbusters.notificator.service.factory;
 
+import com.rbkmoney.fraudbusters.notificator.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +13,6 @@ import static java.util.stream.Collectors.toList;
 public class CsvAttachmentFactory implements AttachmentFactory {
 
     public static final String FILE_POSTFIX = ".csv";
-    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public String create(List<Map<String, String>> list) {
@@ -34,6 +33,6 @@ public class CsvAttachmentFactory implements AttachmentFactory {
 
     @Override
     public String createNameOfAttachment(String name) {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(YYYY_MM_DD_HH_MM_SS)) + FILE_POSTFIX;
+        return name + "_" + DateUtils.timeToString(LocalDateTime.now()) + FILE_POSTFIX;
     }
 }
